@@ -1,7 +1,7 @@
 # Dependencies
 node_modules/
 .pnpm-store/
-
+prisma/
 # Environment variables
 .env
 .env.local
