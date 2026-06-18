@@ -2,12 +2,13 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import { clerkMiddleware , requireAuth } from '@clerk/express'
+import userRoute from '../routes/user.route.js'
 
 const app = express()
 
 // ✅ CORS
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000", "https://what-remove-3wds-liard.vercel.app"],
+  origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],
   credentials: true,
 }));
 
@@ -24,5 +25,7 @@ app.get("/", (req, res) => {
 });
 
 app.use(requireAuth()) //after this middleware all route protected
+
+app.use("/user", userRoute)
 
 export default app; 
