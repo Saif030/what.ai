@@ -3,7 +3,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import { clerkMiddleware , requireAuth } from '@clerk/express'
 import userRoute from '../routes/user.route.js'
-import { clerkWebhook } from './controllers/users.controller.js'
+import { clerkWebhook } from '../controllers/users.controller.js'
 
 
 app.use(cors({
