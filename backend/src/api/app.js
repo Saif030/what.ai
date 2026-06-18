@@ -3,29 +3,31 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import { clerkMiddleware , requireAuth } from '@clerk/express'
 import userRoute from '../routes/user.route.js'
+import { clerkWebhook } from './controllers/users.controller.js'
 
-const app = express()
 
-// ✅ CORS
 app.use(cors({
   origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],
   credentials: true,
 }));
 
-// ❗ AFTER webhook
+// 1. WEBHOOK FIRST — raw body, no auth, no JSON parsing
+app.post("/webhooks", 
+  express.raw({ type: "application/json" }), 
+  clerkWebhook
+)
+
+// 2. THEN normal middleware
 app.use(express.json())
-app.use(express.urlencoded({ extended: true}))
-app.use(express.static("public"))
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
-app.use(clerkMiddleware()) // this provide user in req.body
+app.use(clerkMiddleware())
 
-//routes
-app.get("/", (req, res) => {
-  res.json({ message: "Api is working!" });
-});
+// 3. Public health check
+app.get("/", (req, res) => res.json({ message: "Api is working!" }))
 
-// app.use(requireAuth()) //after this middleware all route protected
+// 4. PROTECTED routes — requireAuth AFTER public routes
+app.use(requireAuth())
+app.use("/user", userRoute)  // /user/* now protected
 
-app.use("/user", userRoute)
-
-export default app; 
+export default app

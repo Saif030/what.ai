@@ -1,11 +1,10 @@
-import express from 'express';
-import { clerkWebhook } from '../controllers/users.controller.js';
+// routes/user.route.js
+import express from 'express'
+const router = express.Router()
 
-const router = express.Router();
+// Only authenticated user routes here
+router.get("/profile", (req, res) => res.json({ message: "Profile" }))
+router.put("/profile", (req, res) => res.json({ message: "Profile updated" }))
+// ... etc
 
-router.route("/webhooks").post(express.raw({ type: "application/json" }), clerkWebhook);
-router.route("/webhooks").get((req, res) => {
-  res.json({ message: "This endpoint is for Clerk webhooks. Please send a POST request." });
-});
-
-export default router;
+export default router
