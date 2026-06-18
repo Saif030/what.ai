@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Api is working!" });
 });
 
-app.use(requireAuth()) //after this middleware all route protected
+// app.use(requireAuth()) //after this middleware all route protected
 
 app.use("/user", userRoute)
 
