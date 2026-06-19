@@ -28,8 +28,7 @@ app.use(clerkMiddleware())
 // 3. Public health check
 app.get("/", (req, res) => res.json({ message: "Api is working!" }))
 
-// 4. PROTECTED routes — requireAuth AFTER public routes
-app.use(requireAuth())
-app.use("/user", userRoute)  // /user/* now protected
+
+app.use("/user", requireAuth(), userRoute)  // /user/* now protected
 
 export default app
