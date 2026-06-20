@@ -19,15 +19,15 @@ function UserRoutes() {
       <Route
         path="/"
         element={
-          isSignedIn ? <Navigate to="/userHome" /> : <Home />
+          <Home />
         }
       />
 
       {/* Protected Routes */}
       <Route
-        path="/"
+        path="/whatai"
         element={
-          isSignedIn ? <UserLayout /> : <Navigate to="/" />
+          <UserLayout />
         }
       >
         <Route path="userHome" element={<UserHome />} />
