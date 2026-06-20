@@ -122,4 +122,25 @@ const clerkWebhook = async (req, res) => {
     }
 };
 
-export { clerkWebhook };
+const getUser = async (req, res) => {
+    try {
+        const { userId } = req.auth;
+        const user = await User.findOne({clerkId : userId});
+        if(!user){
+            return res.status(404).json({
+                success : false,
+                message : "User not found!"
+            })
+        }
+        return res.status(200).json({
+            success : true,
+            message : "User found!",
+            user
+        })
+    } catch (err) {
+        console.error(`Error message: ${err.message}`);
+        return res.status(500).json({ message: err.message || "Failed to get user!" });
+    }
+}
+
+export { clerkWebhook , getUser };

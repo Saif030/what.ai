@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser"
 import { clerkMiddleware , requireAuth } from '@clerk/express'
 import userRoute from '../routes/user.route.js'
 import { clerkWebhook } from '../controllers/users.controller.js'
+import creditsRoute from '../routes/credits.route.js'
 
 
 const app = express()
@@ -29,6 +30,7 @@ app.use(clerkMiddleware())
 app.get("/", (req, res) => res.json({ message: "Api is working!" }))
 
 
-app.use("/user", requireAuth(), userRoute)  // /user/* now protected
+app.use("/user", requireAuth(), userRoute)
+app.use("/credits", requireAuth(), creditsRoute)
 
 export default app

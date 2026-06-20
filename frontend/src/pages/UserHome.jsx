@@ -67,7 +67,7 @@ function UserHome() {
                 <h1 className="text-3xl font-semibold text-gray-500">Recent Creations</h1>
                 <div className="flex flex-col gap-5 py-4 max-h-[400px] overflow-y-auto border-t-2 border-gray-300">
                     {data.map((item, index) => (
-                    <div className="w-full flex items-center justify-between min-h-[90px] bg-white px-12 rounded-xl">
+                    <div key={index} className="w-full flex items-center justify-between min-h-[90px] bg-white px-12 rounded-xl">
                         <div className="flex flex-col gap-1">
                             <p className="font-medium">{item.prompt}</p>
                             <p className="text-sm text-gray-500">{item.date}</p>
