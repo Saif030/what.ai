@@ -5,6 +5,7 @@ import { clerkMiddleware , requireAuth } from '@clerk/express'
 import userRoute from '../routes/user.route.js'
 import { clerkWebhook } from '../controllers/users.controller.js'
 import creditsRoute from '../routes/credits.route.js'
+import { subscriptionWebhook } from '../controllers/billing.controller.js'
 
 
 const app = express()
@@ -20,6 +21,11 @@ app.post("/webhooks",
   clerkWebhook
 )
 
+app.post("/billingwebhook", 
+  express.raw({ type: "application/json" }), 
+  subscriptionWebhook
+)
+
 // 2. THEN normal middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -30,7 +36,7 @@ app.use(clerkMiddleware())
 app.get("/", (req, res) => res.json({ message: "Api is working!" }))
 
 
-app.use("/user", requireAuth(), userRoute)
-app.use("/credits", requireAuth(), creditsRoute)
+app.use("/user", userRoute)
+app.use("/credits", creditsRoute)
 
 export default app

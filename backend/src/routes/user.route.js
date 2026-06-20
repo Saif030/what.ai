@@ -7,7 +7,7 @@ import { getBillingData } from '../controllers/billing.controller.js';
 const router = express.Router();
 
 // ✅ Now this works correctly
-router.get("/profile", requireAuth(), getUser);
-router.get("/billing", requireAuth(), getBillingData);
+router.get("/profile", getUser);
+router.get("/billing", getBillingData);
 
 export default router;
