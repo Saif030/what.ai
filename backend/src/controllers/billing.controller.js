@@ -24,33 +24,35 @@ const subscriptionWebhook = async (req, res) => {
 
         switch (type) {
             case "subscription.created":
-                if (!data) {
-                    return res.status(400).json({ message: "Invalid subscription data!" });
-                }
-
-                const { plan_id, user_email } = data;
-
-                const user = await User.findOne({ email: user_email });
-
-                if (!user) {
-                    return res.status(404).json({ message: "User not found!" });
-                }
-
-                const billCreate = await Transaction.create({
-                    clerkId: user.clerkId,
-                    plan: plan_id,
-                    amount: 0,
-                    credits: 0,
-                    email: user_email,
-                    isPaymentCompleted: true
-                });
-
-                if (!billCreate) {
-                    return res.status(500).json({ message: "Failed to create transaction record!" });
-                }
-
-                console.log(`Successfully processed subscription for: ${user_email}`);
+                console.log("Subscription created event received");
                 break;
+                // if (!data) {
+                //     return res.status(400).json({ message: "Invalid subscription data!" });
+                // }
+
+                // const { plan_id, user_email } = data;
+
+                // const user = await User.findOne({ email: user_email });
+
+                // if (!user) {
+                //     return res.status(404).json({ message: "User not found!" });
+                // }
+
+                // const billCreate = await Transaction.create({
+                //     clerkId: user.clerkId,
+                //     plan: plan_id,
+                //     amount: 0,
+                //     credits: 0,
+                //     email: user_email,
+                //     isPaymentCompleted: true
+                // });
+
+                // if (!billCreate) {
+                //     return res.status(500).json({ message: "Failed to create transaction record!" });
+                // }
+
+                // console.log(`Successfully processed subscription for: ${user_email}`);
+                // break;
 
             case "subscription.updated":
                 // Add your update logic here
@@ -84,7 +86,7 @@ const getBillingData = async (req, res) => {
     try {
         // Fix: In @clerk/express, `req.auth` is an object, not a function.
         // const { userId } = req.auth; 
-        const userId = "user_3FMj6gg1SoGTa64FFdiShHBPMNf";
+        const userId = "user_3FOjYiqaYLDVEKWKrhxyb0B827e";
         
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized!" });
