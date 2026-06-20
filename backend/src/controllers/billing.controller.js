@@ -12,7 +12,7 @@ const subscriptionWebhook = async (req, res) => {
         
         // Ensure payload is a string. If you use express.json() globally, req.body is an object.
         // Svix requires the raw string. 
-        const payload = typeof req.body === "string" ? req.body : JSON.stringify(req.body);
+        const payload = req.body.toString();
 
         const event = whook.verify(payload, {
             "svix-id": req.headers["svix-id"],
