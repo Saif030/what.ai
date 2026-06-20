@@ -125,6 +125,9 @@ const clerkWebhook = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         const { userId } = req.auth();
+        console.log(userId);
+        console.log(req.auth);
+        console.log(typeof req.auth);
         const user = await User.findOne({clerkId : userId});
         if(!user){
             return res.status(404).json({
