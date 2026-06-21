@@ -24,8 +24,12 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     credits: {
-        type: Number,
-        default: 10
+      type: Number,
+      default: 0,
+    },
+    lastCreditedAt: {
+      type: Date,
+      default: null,
     }
 }, {
     timestamps: true

@@ -6,7 +6,7 @@ import userRoute from '../routes/user.route.js'
 import { clerkWebhook } from '../controllers/users.controller.js'
 import creditsRoute from '../routes/credits.route.js'
 import { subscriptionWebhook } from '../controllers/billing.controller.js'
-
+import { grantDailyCredits } from '../middlewares/grantDailyCredits.js'
 
 const app = express()
 
@@ -31,6 +31,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(clerkMiddleware())
+app.use(requireAuth(),grantDailyCredits)
 
 // 3. Public health check
 app.get("/", (req, res) => res.json({ message: "Api is working!" }))
