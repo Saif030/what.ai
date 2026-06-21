@@ -61,7 +61,9 @@ const subscriptionWebhook = async (req, res) => {
                     plan: plan_id,
                     status: status
                 },
-                { new: true }
+                {
+                    returnDocument: "after"
+                }
             );
 
             if (!transaction) {
@@ -90,7 +92,9 @@ const subscriptionWebhook = async (req, res) => {
                 {
                     status: "canceled"
                 },
-                { new: true }
+                {
+                    returnDocument: "after"
+                }
             );
 
             if (!transaction) {
