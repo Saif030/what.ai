@@ -3,15 +3,9 @@ import Transaction from "../models/billing.model.js";
 import { clerkClient } from "@clerk/express";
 import { Webhook } from 'svix';
 
-// ==========================================
-// 1. WEBHOOK HANDLER
-// ==========================================
 const subscriptionWebhook = async (req, res) => {
     try {
         const whook = new Webhook(process.env.SUBSCRIPTION_WEBHOOK_SECRET);
-        
-        // Ensure payload is a string. If you use express.json() globally, req.body is an object.
-        // Svix requires the raw string. 
         const payload = req.body.toString();
 
         const event = whook.verify(payload, {
@@ -22,54 +16,95 @@ const subscriptionWebhook = async (req, res) => {
 
         const { data, type } = event;
 
-        switch (type) {
-            case "subscription.created":
-                console.log("Subscription created event received");
-                break;
-                // if (!data) {
-                //     return res.status(400).json({ message: "Invalid subscription data!" });
-                // }
+        if (type === "subscription.created") {
 
-                // const { plan_id, user_email } = data;
+            console.log("Subscription created event received");
 
-                // const user = await User.findOne({ email: user_email });
+            const { id, plan_id, user_id, status } = data;
 
-                // if (!user) {
-                //     return res.status(404).json({ message: "User not found!" });
-                // }
+            const existing = await Transaction.findOne({
+                subscriptionId: id,
+            });
 
-                // const billCreate = await Transaction.create({
-                //     clerkId: user.clerkId,
-                //     plan: plan_id,
-                //     amount: 0,
-                //     credits: 0,
-                //     email: user_email,
-                //     isPaymentCompleted: true
-                // });
+            if (existing) {
+                return res.status(200).json({
+                success: true,
+                message: "Webhook already processed",
+                });
+            }
 
-                // if (!billCreate) {
-                //     return res.status(500).json({ message: "Failed to create transaction record!" });
-                // }
+            const billCreate = await Transaction.create({
+                clerkId: user_id,
+                plan: plan_id,
+                subscriptionId: id,
+                status,
+            });
 
-                // console.log(`Successfully processed subscription for: ${user_email}`);
-                // break;
-
-            case "subscription.updated":
-                // Add your update logic here
-                console.log("Subscription updated event received");
-                break;
-
-            case "subscription.deleted":
-                // Add your delete logic here
-                console.log("Subscription deleted event received");
-                break;
-
-            default:
-                console.warn(`Unhandled event type: ${type}`);
-                break;
+            return res.status(200).json({
+                success: true,
+                billCreate,
+            });
         }
 
-        // CRITICAL: Always return a 200 OK outside the switch so Svix knows you received it
+        if (type === "subscription.updated") {
+            if (!data) {
+                return res.status(400).json({
+                    message: "Invalid subscription data!"
+                });
+            }
+
+            const { plan_id, user_id, status } = data;
+
+            const transaction = await Transaction.findOneAndUpdate(
+                { clerkId: user_id },
+                {
+                    plan: plan_id,
+                    status: status
+                },
+                { new: true }
+            );
+
+            if (!transaction) {
+                return res.status(404).json({
+                    message: "Transaction not found!"
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                transaction
+            });
+        }
+
+        if (type === "subscription.deleted") {
+            if (!data) {
+                return res.status(400).json({
+                    message: "Invalid subscription data!"
+                });
+            }
+
+            const { user_id } = data;
+
+            const transaction = await Transaction.findOneAndUpdate(
+                { clerkId: user_id },
+                {
+                    status: "canceled"
+                },
+                { new: true }
+            );
+
+            if (!transaction) {
+                return res.status(404).json({
+                    message: "Transaction not found!"
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                transaction
+            });
+        }
+
         return res.status(200).json({ success: true });
 
     } catch (err) {
@@ -79,9 +114,6 @@ const subscriptionWebhook = async (req, res) => {
 }
 
 
-// ==========================================
-// 2. GET BILLING DATA HANDLER
-// ==========================================
 const getBillingData = async (req, res) => {
     try {
         // Fix: In @clerk/express, `req.auth` is an object, not a function.
@@ -98,18 +130,14 @@ const getBillingData = async (req, res) => {
             return res.status(404).json({ message: "User not found in local database!" });
         }
 
-        let subscriptionData = null;
+        const billingData = await Transaction.findOne({ clerkId: userId });
 
-        // Wrap the Clerk API call in its own try/catch. 
-        // If the user doesn't have an active subscription yet, Clerk might throw an error.
-        try {
-            subscriptionData = await clerkClient.billing.getUserBillingSubscription({
-                userId: user.clerkId
+        if(!billingData){
+            return res.status(400).json({
+                message: "No billing data found!"
             });
-        } catch (clerkErr) {
-            console.warn(`Could not fetch Clerk subscription (they might not have one): ${clerkErr.message}`);
-            // We don't fail the whole request here, we just leave subscriptionData as null
         }
+
 
         return res.status(200).json({
             message: "Billing data fetched successfully!",
@@ -118,9 +146,9 @@ const getBillingData = async (req, res) => {
                 email: user.email,
                 clerkId: user.clerkId
             },
-            subscription: subscriptionData || null // Return null if they have no active sub
+            subscription: billingData
         });
-
+        
     } catch (err) {
         console.error(`Get Billing Data Error: ${err.message}`);
         return res.status(500).json({ message: err.message || "Failed to get billing data!" });
