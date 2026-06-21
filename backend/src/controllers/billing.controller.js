@@ -64,11 +64,11 @@ const subscriptionWebhook = async (req, res) => {
           },
           {
             clerkId: data.payer.user_id,
-            plan: data.items[data.items.length-1].plan_id,
+            plan: data.items[0].plan_id,
             status: data.status,
             payer: data.payer,
-            slug: data.items[data.items.length-1].plan.slug,
-            amount: data.items[data.items.length-1].plan.amount,
+            slug: data.items[0].plan.slug,
+            amount: data.items[0].plan.amount,
           },
           {
             returnDocument: "after",
