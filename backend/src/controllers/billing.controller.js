@@ -26,7 +26,11 @@ const subscriptionWebhook = async (req, res) => {
                 });
             }
 
+            console.log(data)
+            
             const { id, plan_id, user_id, status } = data;
+
+            console.log("Subscription data:", { id, plan_id, user_id, status });
 
             const existing = await Transaction.findOne({
                 subscriptionId: id,
