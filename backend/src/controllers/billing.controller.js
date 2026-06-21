@@ -57,34 +57,39 @@ const subscriptionWebhook = async (req, res) => {
     // ===========================
 
     if (type === "subscription.updated") {
-      const transaction =
-        await Transaction.findOneAndUpdate(
-          {
-            subscriptionId: data.id,
-          },
-          {
-            clerkId: data.payer.user_id,
-            plan: data.items[0].plan_id,
-            status: data.status,
-            payer: data.payer,
-            slug: data.items[0].plan.slug,
-            amount: data.items[0].plan.amount,
-          },
-          {
-            returnDocument: "after",
-          }
-        );
+    // Pick the active item; fall back to the latest item if none is active
+    // (e.g. subscription fully canceled and reverted to free)
+    const activeItem =
+        data.items.find((item) => item.status === "active") ||
+        data.items[data.items.length - 1];
 
-      if (!transaction) {
+    const transaction = await Transaction.findOneAndUpdate(
+        {
+        subscriptionId: data.id,
+        },
+        {
+        clerkId: data.payer.user_id,
+        plan: activeItem.plan_id,
+        status: data.status,
+        payer: data.payer,
+        slug: activeItem.plan.slug,
+        amount: activeItem.plan.amount,
+        },
+        {
+        returnDocument: "after",
+        }
+    );
+
+    if (!transaction) {
         return res.status(404).json({
-          message: "Transaction not found!",
+        message: "Transaction not found!",
         });
-      }
+    }
 
-      return res.status(200).json({
+    return res.status(200).json({
         success: true,
         transaction,
-      });
+    });
     }
 
     return res.status(200).json({
