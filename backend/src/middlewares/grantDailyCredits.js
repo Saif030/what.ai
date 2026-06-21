@@ -5,7 +5,7 @@ import Transaction from "../models/billing.model.js"; // your existing synced su
 // Add any other paid plan slugs here as you create more plans.
 const PLAN_CREDITS = {
   free_user: 10,
-  max_premium: 1000,
+  premium: 1000,
 };
 
 const DEFAULT_CREDITS = PLAN_CREDITS.free_user;
@@ -29,6 +29,7 @@ export const grantDailyCredits = async (req, res, next) => {
   try {
     const {userId} = req.auth(); // adjust if you read the user id differently
 
+    // const userId = "user_3FRmCnibJZeyiaJxbSazVWgVtES"
     if (!userId) {
       return next();
     }
@@ -52,7 +53,7 @@ export const grantDailyCredits = async (req, res, next) => {
     }
 
     // Look up the synced subscription to determine the active plan
-    const transaction = await Transaction.findOne({ clerkId });
+    const transaction = await Transaction.findOne({ clerkId : userId });
 
     const isActivePremiumPlan =
       transaction &&
