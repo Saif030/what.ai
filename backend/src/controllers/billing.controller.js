@@ -20,6 +20,12 @@ const subscriptionWebhook = async (req, res) => {
 
             console.log("Subscription created event received");
 
+            if (!data) {
+                return res.status(400).json({
+                    message: "Invalid subscription data!"
+                });
+            }
+
             const { id, plan_id, user_id, status } = data;
 
             const existing = await Transaction.findOne({
