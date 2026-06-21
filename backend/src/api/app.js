@@ -5,7 +5,7 @@ import { clerkMiddleware , requireAuth } from '@clerk/express'
 import userRoute from '../routes/user.route.js'
 import { clerkWebhook } from '../controllers/users.controller.js'
 import creditsRoute from '../routes/credits.route.js'
-// import { subscriptionWebhook } from '../controllers/billing.controller.js'
+import { subscriptionWebhook } from '../controllers/billing.controller.js'
 
 
 const app = express()
