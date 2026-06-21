@@ -20,14 +20,14 @@ const subscriptionWebhook = async (req, res) => {
 
             console.log("Subscription created event received");
 
-            if (!data) {
-                return res.status(400).json({
-                    message: "Invalid subscription data!"
-                });
-            }
+            // if (!data) {
+            //     return res.status(400).json({
+            //         message: "Invalid subscription data!"
+            //     });
+            // }
 
             console.log(data)
-            
+
             const { id, plan_id, user_id, status } = data;
 
             console.log("Subscription data:", { id, plan_id, user_id, status });
