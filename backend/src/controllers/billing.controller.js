@@ -87,36 +87,6 @@ const subscriptionWebhook = async (req, res) => {
       });
     }
 
-    // ===========================
-    // SUBSCRIPTION DELETED
-    // ===========================
-
-    if (type === "subscription.deleted") {
-      const transaction =
-        await Transaction.findOneAndUpdate(
-          {
-            subscriptionId: data.id,
-          },
-          {
-            status: "canceled",
-          },
-          {
-            returnDocument: "after",
-          }
-        );
-
-      if (!transaction) {
-        return res.status(404).json({
-          message: "Transaction not found!",
-        });
-      }
-
-      return res.status(200).json({
-        success: true,
-        transaction,
-      });
-    }
-
     return res.status(200).json({
       success: true,
       message: "Unhandled event",
@@ -136,7 +106,7 @@ const subscriptionWebhook = async (req, res) => {
 
 const getBillingData = async (req, res) => {
   try {
-    const { userId } = req.auth;
+    const { userId } = req.auth();
 
     if (!userId) {
       return res.status(401).json({
