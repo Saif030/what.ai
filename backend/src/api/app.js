@@ -31,7 +31,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(clerkMiddleware())
-app.use(requireAuth(),grantDailyCredits)
 
 // 3. Public health check
 app.get("/", (req, res) => res.json({ message: "Api is working!" }))
@@ -39,5 +38,7 @@ app.get("/", (req, res) => res.json({ message: "Api is working!" }))
 
 app.use("/user", userRoute)
 app.use("/credits", creditsRoute)
+app.use(requireAuth(),grantDailyCredits)
+
 
 export default app
