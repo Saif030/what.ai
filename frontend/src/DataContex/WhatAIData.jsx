@@ -5,34 +5,45 @@ import { useAuth, useUser, useClerk } from "@clerk/react";
 export const WhatAIDataContext = createContext();
 
 const WhatAIDataProvider = ({ children }) => {
-    const { getToken } = useAuth()
-    const { isSignedIn , isLoaded } = useUser()
-    const { openSignIn } = useClerk()
-    
-    const ArticleWriter = async (prompt, length) => {
-        if (!isLoaded) return; 
+    const { getToken, isSignedIn } = useAuth();
+    const { isLoaded } = useUser();
+    const { openSignIn } = useClerk();
 
-        // 2. Handle unauthenticated state once
+    const ArticleWriter = async (prompt, length) => {
+        if (!isLoaded) return;
+
         if (!isSignedIn) {
             openSignIn();
             return;
         }
-        
+
         try {
             const token = await getToken();
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-            const response = await axiosInstance.post("/whatai/write-article", { prompt, length }, config);
+            console.log(isSignedIn)
+
+            const response = await axiosInstance.post(
+                "/whatai/write-article",
+                { prompt, length },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
             return response.data;
-        } catch(error) {
-            // Throw the error so the component calling this function can handle it (e.g., show a toast)
-            throw error; 
+        } catch (error) {
+            console.error(
+                error.response?.data || error.message
+            );
+            throw error;
         }
-    }
+    };
 
     return (
-        <WhatAIDataContext.Provider value={{ ArticleWriter }}>
+        <WhatAIDataContext.Provider
+            value={{ ArticleWriter }}
+        >
             {children}
         </WhatAIDataContext.Provider>
     );
