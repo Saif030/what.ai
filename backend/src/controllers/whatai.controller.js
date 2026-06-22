@@ -113,9 +113,9 @@ const blogTitleGenerator = async (req, res) => {
         }
 
         if(!response){
-            return res.status(500).json({ message: "Failed to generate blog titles" , keyword , category });
+            return res.status(500).json({ message: "Failed to generate blog titles" , prompt , category });
         }
-        return res.status(200).json({ message: "Blog titles generated successfully", keyword , category , data: response });
+        return res.status(200).json({ message: "Blog titles generated successfully", prompt , keyword , category , data: response });
     }catch(error){
         return res.status(500).json({ message: "Internal server error" , error });
     }
