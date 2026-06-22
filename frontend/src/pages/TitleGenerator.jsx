@@ -2,6 +2,7 @@ import { useState } from "react";
 import Output from "../components/Output";
 import { FaHashtag } from "react-icons/fa";
 import { useContext } from "react";
+import { toast } from 'react-toastify';
 import { WhatAIDataContext } from "../DataContex/WhatAIData.jsx";
 
 function TitleGenerator() {
@@ -9,7 +10,7 @@ function TitleGenerator() {
     const [category,setcategory] = useState("General")
     const [result, setResult] = useState(""); 
     const [isLoading, setIsLoading] = useState(false);
-    const { TitleGenerator } = useContext(WhatAIDataContext)
+    const { TitleWriter } = useContext(WhatAIDataContext)
 
     const categoryList = ["General","Technology","Business","Health","Science","Education","Entertainment","Sports","Travel","Food","Lifestyle"]
 
@@ -23,7 +24,7 @@ function TitleGenerator() {
         setResult(""); // Clear previous result
 
         try {
-            const response = await TitleGenerator(keyword, category);
+            const response = await TitleWriter(keyword, category);
             
             // Note: Adjust 'response.article' based on what your backend actually returns.
             // If your backend returns a string directly, just use 'response'
@@ -73,7 +74,7 @@ function TitleGenerator() {
                     )}
                 </button>
             </div>
-            <Output title={"Generated Titles"} result={result} resultColor={"purple-500"} icon1={<FaHashtag className="text-3xl text-purple-500 mx-auto" />} description={"click generate titles button get AI generated titles"}/>
+            <Output title={"Generated Titles"} result={result} textClass = "text-purple-500" btnClass = "bg-purple-500 hover:bg-purple-600" resultColor={"purple-500"} icon1={<FaHashtag className="text-3xl text-purple-500 mx-auto" />} description={"click generate titles button get AI generated titles"}/>
         </div>
     )
 }

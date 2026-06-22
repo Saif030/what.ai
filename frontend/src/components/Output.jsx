@@ -15,7 +15,7 @@ function Output({ title, icon1, description, result, textClass = "text-blue-500"
                     {icon1}
                     {title}
                 </h1>
-                <button className={`${btnClass} text-white px-4 py-2 rounded-xl flex items-center justify-center gap-2 text-sm whitespace-nowrap transition-colors`}>
+                <button className={`${btnClass} text-white px-4 py-2 cursor-pointer rounded-xl flex items-center justify-center gap-2 text-sm whitespace-nowrap transition-colors`}>
                     <RotateCcw size={16} /> Regenerate
                 </button>
             </div>

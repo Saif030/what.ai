@@ -88,6 +88,7 @@ const blogTitleGenerator = async (req, res) => {
     
     try{
         const user = await User.findOne({clerkId: userId});
+
         if(!user){
             return res.status(404).json({ message: "User not found" });
         }
@@ -103,7 +104,6 @@ const blogTitleGenerator = async (req, res) => {
             const chat = await Chat.create({
                 userId,
                 query: prompt,
-                length,
                 response: response?.choices[0]?.message?.content,
                 category: "blog-title"
             });
