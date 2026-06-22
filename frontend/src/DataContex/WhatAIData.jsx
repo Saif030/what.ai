@@ -19,8 +19,6 @@ const WhatAIDataProvider = ({ children }) => {
 
         try {
             const token = await getToken();
-            console.log(isSignedIn)
-
             const response = await axiosInstance.post(
                 "/whatai/write-article",
                 { prompt, length },

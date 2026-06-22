@@ -1,6 +1,9 @@
 import { articleWriterAI } from "../utils/aiIntegration.js";
+import { Chat } from "../models/chat.model.js";
+import { User } from "../models/user.model.js";
 
 const articleWriter = async (req , res) => {
+
     const LENGTH_PRESETS = {
     short: {
         label: "200-500 words",
@@ -17,6 +20,11 @@ const articleWriter = async (req , res) => {
     };
 
     const { prompt , length } = req.body;
+    const { userId } = req.auth();
+
+    if(!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
 
     const lengthPreset = LENGTH_PRESETS[length];
     
@@ -33,7 +41,30 @@ const articleWriter = async (req , res) => {
     Stay within this range — do not significantly exceed it.`;
 
     try{
+        const user = await User.findOne({clerkId: userId});
+        if(!user){
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if(user.credits < 1){
+            return res.status(400).json({ message: "Not enough credits" });
+        }
+
         const response = await articleWriterAI(prompt);
+
+        if(response){
+            // Save to history
+            const chat = await Chat.create({
+                userId,
+                prompt,
+                length,
+                response
+            });
+            user.credits -= 1;
+            await user.save();
+            await chat.save();
+        }
+
         if(!response){
             return res.status(500).json({ message: "Failed to generate article" , articlePrompt , lengthPreset });
         }
