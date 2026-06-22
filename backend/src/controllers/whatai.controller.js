@@ -56,7 +56,7 @@ const articleWriter = async (req , res) => {
             // Save to history
             const chat = await Chat.create({
                 userId,
-                prompt,
+                query: prompt,
                 length,
                 response: response?.choices[0]?.message?.content,
                 category: "article"
