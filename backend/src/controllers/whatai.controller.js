@@ -1,6 +1,6 @@
 import { articleWriterAI } from "../utils/aiIntegration.js";
 import { Chat } from "../models/chat.model.js";
-import { User } from "../models/user.model.js";
+import User from "../models/user.model.js";
 
 const articleWriter = async (req , res) => {
 
