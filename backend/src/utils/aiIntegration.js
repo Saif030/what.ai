@@ -6,6 +6,7 @@ const articleWriterAI = async (prompt) => {
 
     const headers = {
         "Authorization": `Bearer ${NVIDIA_API_KEY}`,
+        "Content-Type": "application/json",
         "Accept": "application/json"
     };
 
@@ -22,7 +23,8 @@ const articleWriterAI = async (prompt) => {
     try {
         const response = await axios.post(invokeUrl, payload, {
             headers,
-            responseType: 'json'
+            responseType: 'json',
+            decompress: true 
         });
         return response.data; // ✅ this actually returns from articleWriterAI now
     } catch (error) {

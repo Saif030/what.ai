@@ -83,7 +83,7 @@ const blogTitleGenerator = async (req, res) => {
     Act as a content strategist. Generate 10 catchy blog titles using:
     Keyword: ${keyword}
     Category: ${category}
-    Make them SEO-friendly, click-worthy, only give titles ,and suitable for the target audience.
+    Only give titles, and suitable for the target audience.
     `;
     
     try{
