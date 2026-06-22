@@ -58,7 +58,7 @@ const articleWriter = async (req , res) => {
                 userId,
                 prompt,
                 length,
-                response
+                response: response?.choices[0]?.message?.content
             });
             user.credits -= 1;
             await user.save();
