@@ -9,6 +9,6 @@ router.get("/", (req, res) => {
 });
 
 //Article writing route
-router.post("/write-article", articleWriter);
+router.post("/write-article", requireAuth() ,articleWriter);
 
 export default router;
