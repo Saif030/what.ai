@@ -21,7 +21,7 @@ function NavBar() {
             <p className="sm:text-xs text-xs text-gray-500">{user?.emailAddresses[0].emailAddress}</p>
           </div>
         </div>
-                    )}
+      )}
     </nav>
   )
 }

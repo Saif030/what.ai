@@ -3,7 +3,6 @@ import { createContext, useContext, useState } from "react"
 import { useUser , useClerk } from "@clerk/react";
 import { logo } from "../assets/assets.js"
 
-
 const SidebarContext = createContext();
 
 export default function SideBar({ children }) {
@@ -29,7 +28,7 @@ export default function SideBar({ children }) {
                         <img onClick={() => openUserProfile()} src={user?.imageUrl || ""} className="w-8 rounded-full h-8" />
                         <div onClick={() => openUserProfile()} className={`flex justify-between items-center overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"} `}>
                             <div className="leading-4">
-                                <h4 className="font-semibold">{user?.username}</h4>
+                                <h4 className="font-semibold text-sm">{user?.fullName}</h4>
                                 <span className="text-xs text-gray-600">{user?.emailAddresses[0].emailAddress}</span>
                             </div>
                             <LogOut onClick={() => signOut()} size={20} />

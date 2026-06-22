@@ -15,21 +15,11 @@ const isSameDay = (a, b) =>
   a.getMonth() === b.getMonth() &&
   a.getDate() === b.getDate();
 
-/**
- * Tops up a user's credits once per calendar day, based on their
- * currently active plan. Relies on the Transaction record kept in sync
- * by your Clerk subscription webhook handler — once a premium plan
- * ends (status flips away from "active" / slug flips back to
- * "free_user"), this automatically drops back to the free daily amount.
- *
- * Mount AFTER your auth middleware (e.g. Clerk's requireAuth()) so
- * req.auth.userId is available.
- */
 export const grantDailyCredits = async (req, res, next) => {
   try {
-    // const {userId} = req.auth(); // adjust if you read the user id differently
+    
+    const {userId} = req.auth(); // adjust if you read the user id differently
 
-    const userId = "user_3FRmCnibJZeyiaJxbSazVWgVtES"
     if (!userId) {
       return next();
     }

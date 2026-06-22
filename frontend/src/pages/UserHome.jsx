@@ -1,6 +1,9 @@
 import { useUser } from '@clerk/react'
+import { useContext } from 'react';
+import { UserDataContext } from '../DataContex/UserData.jsx';
 
 function UserHome() {
+    const {credits} = useContext(UserDataContext)
     const data = [
             {
                 prompt:"write article on topic india gdp continuos growth",
@@ -47,7 +50,7 @@ function UserHome() {
                 <div className="h-[8vw] px-8 flex items-center justify-between w-[20vw] bg-white rounded-xl shadow-lg p-4">
                     <div>
                         <p className="text-lg">Total Credits:</p>
-                        <p className="text-2xl font-semibold">10</p>
+                        <p className="text-2xl font-semibold">{credits}</p>
                     </div>
                     <div>
                         <img className="w-28 h-28 object-cover" src="https://thumbs.dreamstime.com/b/credits-coin-money-color-icon-element-color-finance-signs-premium-quality-graphic-design-icon-signs-symbols-collection-138406669.jpg" alt="" />

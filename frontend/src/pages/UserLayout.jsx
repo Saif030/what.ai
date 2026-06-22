@@ -15,43 +15,43 @@ function UserLayout() {
             icon: <Home size={20} />,
             text: "Home",
             alert: false,
-            route: "/userHome"
+            route: "/whatai/userHome"
         },
         {
             icon: <RiAiGenerateText size={20} />,
             text: "Article Writer",
             alert: false,
-            route: "/articleWriter"
+            route: "/whatai/articleWriter"
         },
         {
             icon: <ImageOff size={20} />,
             text: "Object Removal",
             alert: false,
-            route: "/objectRemoval"
+            route: "/whatai/objectRemoval"
         },
         {
             icon: <FaHashtag size={20} />,
             text: "Blog Title Generator",
             alert: false,
-            route: "/blogTitleGenerator"
+            route: "/whatai/blogTitleGenerator"
         },
         {
             icon: <FaImage size={20} />,
             text: "Image Generation",
             alert: false,
-            route: "/imageGeneration"
+            route: "/whatai/imageGeneration"
         },
         {
             icon: <TbBackground size={20} />,
             text: "Background Removal",
             alert: false,
-            route: "/backgroundRemoval"
+            route: "/whatai/backgroundRemoval"
         },
         {
             icon: <IoIosDocument size={20} />,
             text: "Resume Analyzer",
             alert: false,
-            route: "/resumeAnalyzer"
+            route: "/whatai/resumeAnalyzer"
         }
     ]
 

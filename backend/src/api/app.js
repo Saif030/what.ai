@@ -41,4 +41,4 @@ app.use("/credits", creditsRoute)
 app.use(requireAuth(),grantDailyCredits)
 
 
-export default app
+export default app;
