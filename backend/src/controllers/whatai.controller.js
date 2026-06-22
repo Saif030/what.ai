@@ -39,7 +39,7 @@ const articleWriter = async (req , res) => {
         }
         return res.status(200).json({ message: "Article generated successfully", prompt , lengthPreset , data: response });
     }catch(error){
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: "Internal server error" , error });
     }
 
 }
