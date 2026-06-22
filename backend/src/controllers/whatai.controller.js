@@ -59,7 +59,7 @@ const articleWriter = async (req , res) => {
                 query: prompt,
                 length,
                 response: response?.choices[0]?.message?.content,
-                category: "article"
+                category: "blog-title"
             });
             user.credits -= 1;
             await user.save();
@@ -76,4 +76,49 @@ const articleWriter = async (req , res) => {
 
 }
 
-export { articleWriter }
+const blogTitleGenerator = async (req, res) => {
+    const { keyword, category } = req.body;
+    const { userId } = req.auth()
+    const prompt = `
+    Act as a content strategist. Generate 10 catchy blog titles using:
+    Keyword: ${keyword}
+    Category: ${category}
+    Make them SEO-friendly, click-worthy, only give titles ,and suitable for the target audience.
+    `;
+    
+    try{
+        const user = await User.findOne({clerkId: userId});
+        if(!user){
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if(user.credits < 1){
+            return res.status(400).json({ message: "Not enough credits" });
+        }
+
+        const response = await articleWriterAI(prompt);
+
+        if(response){
+            // Save to history
+            const chat = await Chat.create({
+                userId,
+                query: prompt,
+                length,
+                response: response?.choices[0]?.message?.content,
+                category: "blog-title"
+            });
+            user.credits -= 1;
+            await user.save();
+            await chat.save();
+        }
+
+        if(!response){
+            return res.status(500).json({ message: "Failed to generate blog titles" , keyword , category });
+        }
+        return res.status(200).json({ message: "Blog titles generated successfully", keyword , category , data: response });
+    }catch(error){
+        return res.status(500).json({ message: "Internal server error" , error });
+    }
+}
+
+export { articleWriter , blogTitleGenerator }

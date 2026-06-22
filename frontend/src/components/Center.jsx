@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Center() {
   const customers = [{
         id : "1",
@@ -48,7 +50,7 @@ function Center() {
         Transform your content creation with our suite of premium AI tools. Write articles,<br />generate images, and enhance your workflow.
       </p>
       <div className="flex mb-4">
-        <button className="bg-blue-600 text-white text-base px-10 py-3 rounded-lg">Start Creating</button>
+        <Link to="/whatai/userHome" className="bg-blue-600 text-white text-base px-10 py-3 rounded-lg">Start Creating</Link>
         <button className="ml-4 bg-white px-10 text-base py-3 rounded-lg">Learn More</button>
       </div>
         <div className="flex flex-wrap items-center justify-center p-1 rounded-full bg-white border border-gray-300 text-sm">

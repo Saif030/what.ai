@@ -38,9 +38,38 @@ const WhatAIDataProvider = ({ children }) => {
         }
     };
 
+    const TitleWriter = async (keyword,categeory) => {
+        if(!isLoaded) return;
+
+        if(!isSignedIn){
+            openSignIn();
+            return;
+        }
+
+        try{
+            const token = await getToken();
+            const response = await axiosInstance.post(
+                "/whatai/title-generator",
+                { keyword, categeory },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            return response.data;
+        }catch(error){
+            console.error(
+                error.response?.data || error.message
+            );
+            throw error;
+        }
+    }
+
     return (
         <WhatAIDataContext.Provider
-            value={{ ArticleWriter }}
+            value={{ ArticleWriter, TitleWriter }}
         >
             {children}
         </WhatAIDataContext.Provider>
