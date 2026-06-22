@@ -1,8 +1,10 @@
 import User from '../models/user.model.js';
+import Transaction from '../models/billing.model.js';
 
 const userCredits = async (req,res) => {
-    const { userId } = req.auth();
+    // const { userId } = req.auth();
 
+    const userId = "user_3FRmCnibJZeyiaJxbSazVWgVtES"
     if(!userId){
         return res.status(401).json({
             success : false,

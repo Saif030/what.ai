@@ -80,22 +80,31 @@ const subscriptionWebhook = async (req, res) => {
         }
     );
 
-    if (!transaction) {
-        return res.status(404).json({
-        message: "Transaction not found!",
-        });
+
+    const user = await User.findOne({ clerkId: data.payer.user_id });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found!",
+      });
     }
 
-    return res.status(200).json({
-        success: true,
-        transaction,
-    });
+    user.lastCreditedAt = null;
+      
+    await user.save();
+
+    if (!transaction) {
+      return res.status(404).json({
+        message: "Transaction not found!",
+      });
     }
 
     return res.status(200).json({
       success: true,
-      message: "Unhandled event",
+      transaction,
     });
+    }
+
   } catch (err) {
     console.error(
       `Webhook Verification Error: ${err.message}`

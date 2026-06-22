@@ -27,9 +27,9 @@ const isSameDay = (a, b) =>
  */
 export const grantDailyCredits = async (req, res, next) => {
   try {
-    const {userId} = req.auth(); // adjust if you read the user id differently
+    // const {userId} = req.auth(); // adjust if you read the user id differently
 
-    // const userId = "user_3FRmCnibJZeyiaJxbSazVWgVtES"
+    const userId = "user_3FRmCnibJZeyiaJxbSazVWgVtES"
     if (!userId) {
       return next();
     }
@@ -60,7 +60,7 @@ export const grantDailyCredits = async (req, res, next) => {
       transaction.slug &&
       transaction.slug !== "free_user" &&
       transaction.status === "active";
-
+    
     const creditsToAdd = isActivePremiumPlan
       ? PLAN_CREDITS[transaction.slug] ?? DEFAULT_CREDITS
       : DEFAULT_CREDITS;
