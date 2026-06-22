@@ -7,6 +7,7 @@ import { clerkWebhook } from '../controllers/users.controller.js'
 import creditsRoute from '../routes/credits.route.js'
 import { subscriptionWebhook } from '../controllers/billing.controller.js'
 import { grantDailyCredits } from '../middlewares/grantDailyCredits.js'
+import whataiRoute from '../routes/chats.route.js'
 
 const app = express()
 
@@ -38,6 +39,7 @@ app.get("/", (req, res) => res.json({ message: "Api is working!" }))
 
 app.use("/user", userRoute)
 app.use("/credits", creditsRoute)
+app.use("/whatai", whataiRoute)
 app.use(requireAuth(),grantDailyCredits)
 
 
