@@ -17,10 +17,10 @@ const chatSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    timestamp: {
-        type: Date,
-        default: Date.now
+    length: {
+        type: String,
+        required: true
     }
-});
+},{timestamps: true});
 
 export const Chat = mongoose.model("Chat", chatSchema);
