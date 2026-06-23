@@ -321,34 +321,41 @@ const resumeAnalyzer = async (req, res) => {
 
         const result = await extractTextFromBuffer(pdf);
 
-        console.log(result);
-
         if(!result){
             return res.status(500).json({message: "Failed to parse pdf"});
         }
 
-        const prompt =`
-You are an expert technical recruiter. Your job is to evaluate a candidate resume against a job description and return a structured JSON assessment.
+        const prompt =`You are a senior Technical Recruiter, ATS Specialist, and Hiring Manager with expertise in software engineering recruitment.
+
+Your task is to analyze a candidate's resume against the provided job description and return a comprehensive ATS-style evaluation.
 
 JOB DESCRIPTION:
 ${job_description}
 
-RESUME:
-${result?.text}
+RESUME:{${result?.text}}
 
-Return ONLY valid JSON, no explanation, no markdown, no code fences, and no </think> tags or reasoning text. Use this exact structure:
-{{
-  "score": <integer 0-100>,
-  "recommendation": "<Strong Fit | Moderate Fit | Not Fit>",
-  "strengths": ["<strength 1>", "<strength 2>", "<strength 3>"],
-  "gaps": ["<gap 1>", "<gap 2>"],
-  "summary": "<2-3 sentence hiring manager summary>"
-}}
+Instructions:
 
-Scoring guide:give ats score based on the resume and job description
+1. Evaluate the resume specifically against the job description.
+2. Calculate an ATS Match Score from 0-100 based on:
 
-Be specific. Mention actual skills and experience from the resume. Do not invent information.
-        `
+   * Technical skills match (35%)
+   * Relevant experience (25%)
+   * Projects and accomplishments (15%)
+   * Education and certifications (10%)
+   * Keywords and ATS optimization (15%)
+3. Use ONLY information explicitly present in the resume.
+4. Do NOT assume skills, experience, or qualifications that are not mentioned.
+5. Identify missing skills, technologies, tools, certifications, or experience required by the job description.
+6. Highlight strengths that directly improve hiring chances.
+7. Be objective and recruiter-focused.
+8. Ensure all fields are always present.
+9. Dont use emoji's.
+10.Response should be professional.
+
+`
+        
+        console.log(prompt);
         const aiResponse = await articleWriterAI(prompt);
 
         if(!aiResponse){
