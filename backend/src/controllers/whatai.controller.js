@@ -332,7 +332,7 @@ Your task is to analyze a candidate's resume against the provided job descriptio
 JOB DESCRIPTION:
 ${job_description}
 
-RESUME:{${result?.text}}
+RESUME:${result}
 
 Instructions:
 
