@@ -104,11 +104,11 @@ const blogTitleGenerator = async (req, res) => {
 
     Generate exactly 10 catchy, unique blog post titles using:
     - Keyword: ${keyword}
-    - Category: ${category}
+    - Category: ${categeory}
 
     Requirements:
     - Each title must naturally include the keyword "${keyword}" (or a close variation).
-    - Titles should fit the "${category}" niche and appeal to readers searching that topic.
+    - Titles should fit the "${categeory}" niche and appeal to readers searching that topic.
     - Mix styles across the 10: how-to, listicle, question-based, "ultimate guide", and curiosity/benefit-driven.
     - Keep each title between 6-12 words.
     - Make them engaging and clickable, but never misleading or clickbait.
@@ -353,9 +353,7 @@ Instructions:
 9. Dont use emoji's.
 10.Response should be professional.
 
-`
-        
-        console.log(prompt);
+`;
         const aiResponse = await articleWriterAI(prompt);
 
         if(!aiResponse){
