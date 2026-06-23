@@ -125,10 +125,39 @@ const WhatAIDataProvider = ({ children }) => {
         }
     }
 
+    const ResumeAnalyzer = async (formData) => {
+        if(!isLoaded) return;
+
+        if(!isSignedIn){
+            openSignIn();
+            return;
+        }
+
+        try{
+            const token = await getToken();
+            const response = await axiosInstance.post(
+                "/whatai/resume-analyzer",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            return response.data;
+        }catch(error){
+            console.error(
+                error.response?.data || error.message
+            );
+            throw error;
+        }
+    }
+
 
     return (
         <WhatAIDataContext.Provider
-            value={{ ArticleWriter, TitleWriter, BackGroundRemover , ObjectRemover }}
+            value={{ ArticleWriter, TitleWriter, BackGroundRemover , ObjectRemover , ResumeAnalyzer }}
         >
             {children}
         </WhatAIDataContext.Provider>

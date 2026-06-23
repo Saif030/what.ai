@@ -5,9 +5,9 @@ import { toast } from 'react-toastify';
 import { useContext , useState , useRef } from "react";
 
 function ResumeAnalyzer() {
-    const { ObjectRemover } = useContext(WhatAIDataContext);
-    const [tempimage, setTempimage] = useState(null);
-    const [ prompt , setprompt ] = useState(null)
+    const { ResumeAnalyzer } = useContext(WhatAIDataContext);
+    const [temppdf, setTemppdf] = useState(null);
+    const [prompt , setPrompt] = useState(null)
     const [result, setResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef(null);
@@ -18,8 +18,8 @@ function ResumeAnalyzer() {
         if (!file) return;
         
         // Validate file type
-        if (!file.type.startsWith('image/')) {
-            toast.error("Please select a valid image file");
+        if (file.type !== 'application/pdf') {
+            toast.error("Please select a valid pdf file");
             e.target.value = ''; // Reset input
             return;
         }
@@ -27,17 +27,17 @@ function ResumeAnalyzer() {
         // Optional: validate file size (e.g., 5MB max)
         const MAX_SIZE = 5 * 1024 * 1024;
         if (file.size > MAX_SIZE) {
-            toast.error("Image must be smaller than 5MB");
+            toast.error("Pdf must be smaller than 5MB");
             e.target.value = '';
             return;
         }
 
-        setTempimage(file);
+        setTemppdf(file);
     };
 
     const handleFileUpload = async () => {
-        if (!tempimage || !prompt) {
-            toast.error("Please select an image and enter prompt");
+        if (!temppdf || !prompt) {
+            toast.error("Please select an pdf and enter job description");
             return;
         }
 
@@ -45,11 +45,11 @@ function ResumeAnalyzer() {
         setResult(null); // Use null instead of empty string for consistency
 
         const data = new FormData();
-        data.append('image', tempimage);
-        data.append('prompt',prompt);
+        data.append('pdf', temppdf);
+        data.append('job_description',prompt);
 
         try {
-            const response = await ObjectRemover(data);
+            const response = await ResumeAnalyzer(data);
             setResult(response);
         } catch (error) {
             console.error(error);
@@ -60,8 +60,8 @@ function ResumeAnalyzer() {
     };
 
     const clearSelection = () => {
-        setTempimage(null);
-        setprompt(null)
+        setTemppdf(null);
+        setPrompt(null)
         setResult(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
@@ -79,11 +79,20 @@ function ResumeAnalyzer() {
                 </div>
                 <div className="w-full py-3">
                     <p className="text-sm font-semibold">Upload Resume</p>
-                    <input type="file" placeholder="Upload resume" className="w-full text-sm text-gray-600 mt-2 px-3 py-2 border border-gray-300 rounded-xl focus:outline-none" />
+                    <input ref={fileInputRef} accept="application/pdf" onChange={handleFileChange} type="file" placeholder="Upload resume" className="w-full text-sm text-gray-600 mt-2 px-3 py-2 border border-gray-300 rounded-xl focus:outline-none" />
                 </div>
-                <button className="bg-taupe-500 cursor-pointer text-white px-4 py-2 mt-4 rounded-xl flex items-center justify-center gap-2"><IoIosDocument />Analyze Resume</button>
+                {temppdf && (
+                    <p className="text-xs text-gray-500 mt-1">
+                        Selected: {temppdf.name} ({(temppdf.size / 1024).toFixed(1)} KB)
+                    </p>
+                )}
+                <div className="w-full py-3">
+                    <p className="text-sm font-semibold">Enter Job Description</p>
+                    <input ref={fileInputRef} onChange={(e) => (setPrompt(e.target.value))} type="text" placeholder="Enter job description" className="w-full text-sm text-gray-600 mt-2 px-3 py-2 border border-gray-300 rounded-xl focus:outline-none" />
+                </div>
+                <button disabled={isLoading || !temppdf} onClick={handleFileUpload} className="bg-taupe-500 hover:bg-taupe-600 disabled:bg-taupe-300 disabled:cursor-not-allowed cursor-pointer text-white px-4 py-2 mt-4 rounded-xl flex items-center justify-center gap-2"><IoIosDocument />{ isLoading ? "Analyzing..." : "Analyze Resume"}</button>
             </div>
-            <Output title={"Analysis Result"} textClass="text-taupe-500" btnClass="bg-taupe-500 hover:bg-taupe-600" icon1={<IoIosDocument className="text-3xl text-taupe-500 mx-auto" />} description={"click analyze resume button get AI generated analysis"}/>
+            <Output title={"Analysis Result"} result={result} textClass="text-taupe-500" btnClass="bg-taupe-500 hover:bg-taupe-600" icon1={<IoIosDocument className="text-3xl text-taupe-500 mx-auto" />} description={"click analyze resume button get AI generated analysis"}/>
         </div>
     )
 }

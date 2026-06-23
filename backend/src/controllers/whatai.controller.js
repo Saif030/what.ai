@@ -376,7 +376,7 @@ Instructions:
             await chat.save();
         }
 
-        return res.status(200).json({ success: true , pdfUrl:response?.secureUrl , data : aiResponse?.choices[0]?.message?.content });
+        return res.status(200).json({ success: true , pdfUrl:response?.secureUrl , data : aiResponse });
 
     }catch(error){
         return res.status(500).json({ message: "Internal server error" , error });
