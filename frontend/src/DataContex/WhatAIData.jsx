@@ -67,9 +67,68 @@ const WhatAIDataProvider = ({ children }) => {
         }
     }
 
+    const BackGroundRemover = async (formData) => {
+        if(!isLoaded) return;
+
+        if(!isSignedIn){
+            openSignIn();
+            return;
+        }
+
+        try{
+            const token = await getToken();
+            const response = await axiosInstance.post(
+                "/whatai/remove-background",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            return response.data;
+        }catch(error){
+            console.error(
+                error.response?.data || error.message
+            );
+            throw error;
+        }
+    }
+
+    const ObjectRemover = async (formData) => {
+        if(!isLoaded) return;
+
+        if(!isSignedIn){
+            openSignIn();
+            return;
+        }
+
+        try{
+            const token = await getToken();
+            const response = await axiosInstance.post(
+                "/whatai/remove-object",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            return response.data;
+        }catch(error){
+            console.error(
+                error.response?.data || error.message
+            );
+            throw error;
+        }
+    }
+
+
     return (
         <WhatAIDataContext.Provider
-            value={{ ArticleWriter, TitleWriter }}
+            value={{ ArticleWriter, TitleWriter, BackGroundRemover , ObjectRemover }}
         >
             {children}
         </WhatAIDataContext.Provider>

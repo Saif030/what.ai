@@ -21,7 +21,8 @@
     "express": "^5.2.1",
     "mongoose": "^9.6.2",
     "multer": "^2.2.0",
-    "pdf-parse": "^2.4.5",
+    "pdf-parse": "^1.1.1",
+    "pdfreader": "^3.0.8",
     "svix": "^1.95.2"
   },
   "devDependencies": {

@@ -7,6 +7,7 @@ export const UserDataContext = createContext();
 const UserDataProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [billingData, setBillingData] = useState(null);
+    const [ chatData , setchatData ] = useState(null)
     const [credits, setCredits] = useState(0);
     const [loading, setLoading] = useState(true);
 
@@ -34,14 +35,16 @@ const UserDataProvider = ({ children }) => {
             };
 
             // 3. Fetch all data concurrently for better performance
-            const [userRes, billingRes, creditsRes] = await Promise.all([
+            const [userRes, billingRes, chatsRes, creditsRes] = await Promise.all([
                 axiosInstance.get("/user/profile", config),
                 axiosInstance.get("/user/billing", config),
+                axiosInstance.get("/user/chats",config),
                 axiosInstance.get("/credits/get-credits", config)
             ]);
 
             setUser(userRes.data);
             setBillingData(billingRes.data);
+            setchatData(chatsRes.data);
             setCredits(creditsRes.data);
         } catch (error) {
             console.error("Error fetching user data:", error);
@@ -62,6 +65,7 @@ const UserDataProvider = ({ children }) => {
             value={{ 
                 user, 
                 billingData, 
+                chatData,
                 credits, 
                 loading, 
                 refreshData 

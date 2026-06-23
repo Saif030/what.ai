@@ -68,14 +68,14 @@ function ArticleWriting() {
                     <div className="flex gap-4 mt-3">
                         <div 
                             onClick={() => setLength("short")} 
-                            className={`cursor-pointer flex items-center gap-2 text-sm text-blue-800 border border-indigo-200 rounded-full px-4 py-1 transition-all ${length === "short" ? "bg-blue-400/20 shadow-sm" : "bg-blue-400/10 hover:bg-blue-400/15"}`}
+                            className={`cursor-pointer flex items-center gap-2 text-sm text-blue-800 border border-indigo-200 rounded-full px-4 py-1 transition-all ${length === "short" ? "bg-blue-700 text-white shadow-sm" : "bg-blue-400/10 hover:bg-blue-400/15"}`}
                         >
                             <span className="text-sm">Short (200-500) Word</span>
                         </div>
 
                         <div 
                             onClick={() => setLength("long")} 
-                            className={`cursor-pointer flex items-center gap-2 text-sm text-blue-800 border border-indigo-200 rounded-full px-4 py-1 transition-all ${length === "long" ? "bg-blue-400/20 shadow-sm" : "bg-blue-400/10 hover:bg-blue-400/15"}`}
+                            className={`cursor-pointer flex items-center gap-2 text-sm text-blue-800 border border-indigo-200 rounded-full px-4 py-1 transition-all ${length === "long" ? "bg-blue-700 text-white shadow-sm" : "bg-blue-400/10 hover:bg-blue-400/15"}`}
                         >
                             <span className="text-sm">Long (1000+) Word</span>
                         </div>
@@ -84,7 +84,7 @@ function ArticleWriting() {
                 
                 <button 
                     onClick={onSubmit} 
-                    disabled={isLoading}
+                    disabled={isLoading || !topic}
                     className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed text-white px-4 py-2 mt-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
                 >
                     {isLoading ? (

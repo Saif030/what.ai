@@ -3,7 +3,23 @@ import { Chat } from "../models/chat.model.js";
 import User from "../models/user.model.js";
 import uploadOnCloudinary from "../utils/CloudinaryConfig.js";
 import Transaction from "../models/billing.model.js";
-import { PDFParse } from 'pdf-parse';
+import { PdfReader } from "pdfreader";
+
+const extractTextFromBuffer = (buffer) => {
+  return new Promise((resolve, reject) => {
+    let text = "";
+
+    new PdfReader().parseBuffer(buffer, (err, item) => {
+      if (err) {
+        reject(err);
+      } else if (!item) {
+        resolve(text);
+      } else if (item.text) {
+        text += item.text + " ";
+      }
+    });
+  });
+};
 
 const articleWriter = async (req , res) => {
 
@@ -142,7 +158,11 @@ const backgorundRemover = async (req,res) => {
     const image = req.file.buffer;
     const { userId } = req.auth()
     if(!image){
-        return res.status(200).json({message: "No image provided"});
+        return res.status(400).json({message: "No image provided"});
+    }
+
+    if(!userId){
+        return res.status(401).json({message: "Unauthorized"});
     }
 
     try{
@@ -199,10 +219,10 @@ const objectRemover = async (req,res) => {
     const { userId } = req.auth()
     const { prompt } = req.body;
     if(!image){
-        return res.status(200).json({message: "No image provided"});
+        return res.status(400).json({message: "No image provided"});
     }
     if(!prompt){
-        return res.status(200).json({message: "No prompt provided"});
+        return res.status(400).json({message: "No prompt provided"});
     }
 
     try{
@@ -256,9 +276,18 @@ const objectRemover = async (req,res) => {
 
 const resumeAnalyzer = async (req, res) => {
     const pdf = req.file.buffer;
+    const { job_description } = req.body;
     const { userId } = req.auth()
     if(!pdf){
-        return res.status(200).json({message: "No pdf provided"});
+        return res.status(400).json({message: "No pdf provided"});
+    }
+
+    if(!userId){
+        return res.status(401).json({message: "Unauthorized"});
+    }
+
+    if(!job_description){
+        return res.status(400).json({message: "No job description provided"});
     }
 
     try{
@@ -290,15 +319,20 @@ const resumeAnalyzer = async (req, res) => {
             return res.status(500).json({message: "Failed to upload image"});
         }
 
-        const parser = new PDFParse({ url: response?.secureUrl });
-        const result = await parser.getText();
+        const result = await extractTextFromBuffer(pdf);
+
+        console.log(result);
+
+        if(!result){
+            return res.status(500).json({message: "Failed to parse pdf"});
+        }
 
         const prompt =`You are a senior Technical Recruiter, ATS Specialist, and Hiring Manager with expertise in software engineering recruitment.
 
 Your task is to analyze a candidate's resume against the provided job description and return a comprehensive ATS-style evaluation.
 
 JOB DESCRIPTION:
-full-stack-developer
+${job_description}
 
 RESUME:{${result?.text}}
 
@@ -318,6 +352,9 @@ Instructions:
 6. Highlight strengths that directly improve hiring chances.
 7. Be objective and recruiter-focused.
 8. Ensure all fields are always present.
+9. Dont use emoji's.
+10.Response should be professional.
+
 `
 
         const aiResponse = await articleWriterAI(prompt);
@@ -339,7 +376,7 @@ Instructions:
             await chat.save();
         }
 
-        return res.status(200).json({ success: true , data : aiResponse?.choices[0]?.message?.content });
+        return res.status(200).json({ success: true , pdfUrl:response?.secureUrl , data : aiResponse?.choices[0]?.message?.content });
 
     }catch(error){
         return res.status(500).json({ message: "Internal server error" , error });
