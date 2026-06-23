@@ -14,7 +14,7 @@ const articleWriterAI = async (prompt) => {
         "model": "moonshotai/kimi-k2.6",
         "messages": [{ "role": "user", "content": prompt }],
         "max_tokens": 16384,
-        "temperature": 1.00,
+        "temperature": 0.5,
         "top_p": 1.00,
         "stream": false,
         "chat_template_kwargs": { "thinking": false }
