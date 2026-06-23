@@ -24,7 +24,8 @@
     "react-router-dom": "^7.15.1",
     "react-toastify": "^11.1.0",
     "remark-gfm": "^4.0.1",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.0",
+    "uuid": "^14.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

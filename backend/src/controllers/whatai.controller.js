@@ -3,6 +3,7 @@ import { Chat } from "../models/chat.model.js";
 import User from "../models/user.model.js";
 import uploadOnCloudinary from "../utils/CloudinaryConfig.js";
 import Transaction from "../models/billing.model.js";
+import { PDFParse } from 'pdf-parse';
 
 const articleWriter = async (req , res) => {
 
@@ -79,13 +80,27 @@ const articleWriter = async (req , res) => {
 }
 
 const blogTitleGenerator = async (req, res) => {
-    const { keyword, category } = req.body;
+
+    const { keyword, categeory } = req.body;
     const { userId } = req.auth()
     const prompt = `
-    Generate 10 catchy blog titles using:
-    Keyword: ${keyword}
-    Category: ${category}
-    Only give titles, and suitable for the target audience.
+    You are an expert content strategist and SEO copywriter who writes high-converting blog titles.
+
+    Generate exactly 10 catchy, unique blog post titles using:
+    - Keyword: ${keyword}
+    - Category: ${category}
+
+    Requirements:
+    - Each title must naturally include the keyword "${keyword}" (or a close variation).
+    - Titles should fit the "${category}" niche and appeal to readers searching that topic.
+    - Mix styles across the 10: how-to, listicle, question-based, "ultimate guide", and curiosity/benefit-driven.
+    - Keep each title between 6-12 words.
+    - Make them engaging and clickable, but never misleading or clickbait.
+    - No repeated phrasing patterns (e.g. don't start every title the same way).
+
+    Output format:
+    - Return ONLY the 10 titles, one per line.
+    - No numbering, bullet points, quotation marks, markdown, or explanations.
     `;
     
     try{
@@ -115,9 +130,9 @@ const blogTitleGenerator = async (req, res) => {
         }
 
         if(!response){
-            return res.status(500).json({ message: "Failed to generate blog titles" , prompt , category });
+            return res.status(500).json({ message: "Failed to generate blog titles" , prompt , categeory });
         }
-        return res.status(200).json({ message: "Blog titles generated successfully", prompt , keyword , category , data: response });
+        return res.status(200).json({ message: "Blog titles generated successfully", prompt , keyword , categeory , data: response });
     }catch(error){
         return res.status(500).json({ message: "Internal server error" , error });
     }
@@ -239,4 +254,96 @@ const objectRemover = async (req,res) => {
     }
 }
 
-export { articleWriter , blogTitleGenerator , backgorundRemover , objectRemover }
+const resumeAnalyzer = async (req, res) => {
+    const pdf = req.file.buffer;
+    const { userId } = req.auth()
+    if(!pdf){
+        return res.status(200).json({message: "No pdf provided"});
+    }
+
+    try{
+        const user = await User.findOne({clerkId: userId});
+
+        if(!user){
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const transaction = await Transaction.findOne({
+            clerkId : user.clerkId
+        });
+
+        if(!transaction){
+            return res.status(400).json({ message: "Transaction not found not a premium subscriber" });
+        }
+
+        if(transaction.slug !== "premium"){
+            return res.status(400).json({ message: "Not a premium subscriber" });
+        }
+
+        if(user.credits < 1){
+            return res.status(400).json({ message: "Not enough credits" });
+        }
+
+        const response = await uploadOnCloudinary(pdf);
+
+        if(!response){
+            return res.status(500).json({message: "Failed to upload image"});
+        }
+
+        const parser = new PDFParse({ url: response?.secureUrl });
+        const result = await parser.getText();
+
+        const prompt =`You are a senior Technical Recruiter, ATS Specialist, and Hiring Manager with expertise in software engineering recruitment.
+
+Your task is to analyze a candidate's resume against the provided job description and return a comprehensive ATS-style evaluation.
+
+JOB DESCRIPTION:
+full-stack-developer
+
+RESUME:{${result?.text}}
+
+Instructions:
+
+1. Evaluate the resume specifically against the job description.
+2. Calculate an ATS Match Score from 0-100 based on:
+
+   * Technical skills match (35%)
+   * Relevant experience (25%)
+   * Projects and accomplishments (15%)
+   * Education and certifications (10%)
+   * Keywords and ATS optimization (15%)
+3. Use ONLY information explicitly present in the resume.
+4. Do NOT assume skills, experience, or qualifications that are not mentioned.
+5. Identify missing skills, technologies, tools, certifications, or experience required by the job description.
+6. Highlight strengths that directly improve hiring chances.
+7. Be objective and recruiter-focused.
+8. Ensure all fields are always present.
+`
+
+        const aiResponse = await articleWriterAI(prompt);
+
+        if(!aiResponse){
+            return res.status(500).json({message: "Failed to generate AI response"});
+        }
+
+        if(aiResponse){
+            // Save to history
+            const chat = await Chat.create({
+                userId,
+                query: response?.secureUrl,
+                response: aiResponse?.choices[0]?.message?.content,
+                category: "resume-analyzer"
+            });
+            user.credits -= 30;
+            await user.save();
+            await chat.save();
+        }
+
+        return res.status(200).json({ success: true , data : aiResponse?.choices[0]?.message?.content });
+
+    }catch(error){
+        return res.status(500).json({ message: "Internal server error" , error });
+    }
+}
+
+export { articleWriter , blogTitleGenerator , backgorundRemover , objectRemover , resumeAnalyzer }
