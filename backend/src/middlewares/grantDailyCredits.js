@@ -55,7 +55,7 @@ export const grantDailyCredits = async (req, res, next) => {
       ? PLAN_CREDITS[transaction.slug] ?? DEFAULT_CREDITS
       : DEFAULT_CREDITS;
 
-    user.credits += creditsToAdd;
+    user.credits = creditsToAdd;
     user.lastCreditedAt = now;
     await user.save();
 
