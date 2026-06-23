@@ -80,7 +80,7 @@ const blogTitleGenerator = async (req, res) => {
     const { keyword, category } = req.body;
     const { userId } = req.auth()
     const prompt = `
-    Act as a content strategist. Generate 10 catchy blog titles using:
+    Generate 10 catchy blog titles using:
     Keyword: ${keyword}
     Category: ${category}
     Only give titles, and suitable for the target audience.
