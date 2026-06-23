@@ -118,7 +118,6 @@ const clerkWebhook = async (req, res) => {
 
         
     } catch (err) {
-        console.error(`Error message: ${err.message}`);
         return res.status(400).json({ message: err.message || "Webhook verification failed!" });
     }
 };
@@ -126,9 +125,6 @@ const clerkWebhook = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         const { userId } = req.auth();
-        console.log(userId);
-        console.log(req.auth);
-        console.log(typeof req.auth);
         const user = await User.findOne({clerkId : userId});
         if(!user){
             return res.status(404).json({
@@ -142,15 +138,13 @@ const getUser = async (req, res) => {
             user
         })
     } catch (err) {
-        console.error(`Error message: ${err.message}`);
         return res.status(500).json({ message: err.message || "Failed to get user!" });
     }
 }
 
 const getChats = async (req, res) => {
     try {
-        // const { userId } = req.auth();
-        const userId = "user_3FTkUqOHKDF2MIiXC6f4SXmRQzT"
+        const { userId } = req.auth();
         const chats = await Chat.find({userId});
         if(!chats){
             return res.status(404).json({
@@ -164,17 +158,14 @@ const getChats = async (req, res) => {
             chats
         })
     } catch (err) {
-        console.error(`Error message: ${err.message}`);
         return res.status(500).json({ message: err.message || "Failed to get chats!" });
     }
 }
 
 const getCategories = async (req, res) => {
     try {
-        // const { userId } = req.auth();
-        // const { category } = req.params;
-        const userId = "user_3FTkUqOHKDF2MIiXC6f4SXmRQzT" 
-        const category = "article"  
+        const { userId } = req.auth();
+        const { category } = req.params; 
         const categories = await Chat.find({
             $and: [
                 {userId : userId},
@@ -195,7 +186,6 @@ const getCategories = async (req, res) => {
             categories
         })
     } catch (err) {
-        console.error(`Error message: ${err.message}`);
         return res.status(500).json({ message: err.message || "Failed to get categories!" });
     }
 }

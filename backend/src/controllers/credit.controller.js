@@ -26,7 +26,6 @@ const userCredits = async (req,res) => {
             credits : user.credits
         })
     }catch(err){
-        console.error(`Error fetching user credits: ${err.message}`);
         return res.status(500).json({
             success : false,
             message : "Failed to fetch user credits!"
@@ -64,7 +63,6 @@ const creditsUpdation = async (req , res) => {
             credits : user.credits
         })
     }catch(err){
-        console.error(`Error updating user credits: ${err.message}`);
         return res.status(500).json({
             success : false,
             message : "Failed to update user credits!"

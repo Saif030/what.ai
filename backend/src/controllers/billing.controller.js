@@ -106,10 +106,6 @@ const subscriptionWebhook = async (req, res) => {
     }
 
   } catch (err) {
-    console.error(
-      `Webhook Verification Error: ${err.message}`
-    );
-
     return res.status(400).json({
       message:
         err.message ||

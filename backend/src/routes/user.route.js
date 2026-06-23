@@ -9,7 +9,7 @@ const router = express.Router();
 // ✅ Now this works correctly
 router.get("/profile", requireAuth() , getUser);
 router.get("/billing", requireAuth() , getBillingData);
-router.get("/chats" , getChats);
-router.get("/categories/:category" , getCategories);
+router.get("/chats" , requireAuth() ,getChats);
+router.get("/categories/:category" , requireAuth() , getCategories);
 
 export default router;
