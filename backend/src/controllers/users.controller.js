@@ -1,5 +1,6 @@
 import { Webhook } from 'svix';
 import User from '../models/user.model.js';
+import { Chat } from '../models/chat.model.js';
 
 const clerkWebhook = async (req, res) => {
     try {
@@ -146,4 +147,57 @@ const getUser = async (req, res) => {
     }
 }
 
-export { clerkWebhook , getUser };
+const getChats = async (req, res) => {
+    try {
+        // const { userId } = req.auth();
+        const userId = "user_3FTkUqOHKDF2MIiXC6f4SXmRQzT"
+        const chats = await Chat.find({userId});
+        if(!chats){
+            return res.status(404).json({
+                success : false,
+                message : "Chats not found!"
+            })
+        }
+        return res.status(200).json({
+            success : true,
+            message : "Chats found!",
+            chats
+        })
+    } catch (err) {
+        console.error(`Error message: ${err.message}`);
+        return res.status(500).json({ message: err.message || "Failed to get chats!" });
+    }
+}
+
+const getCategories = async (req, res) => {
+    try {
+        // const { userId } = req.auth();
+        // const { category } = req.params;
+        const userId = "user_3FTkUqOHKDF2MIiXC6f4SXmRQzT" 
+        const category = "article"  
+        const categories = await Chat.find({
+            $and: [
+                {userId : userId},
+                {category: category}
+            ]
+        });
+
+        if(!categories || categories.length === 0){
+            return res.status(404).json({
+                success : false,
+                message : "Categories not found!"
+            })
+        }
+        
+        return res.status(200).json({
+            success : true,
+            message : "Categories found!",
+            categories
+        })
+    } catch (err) {
+        console.error(`Error message: ${err.message}`);
+        return res.status(500).json({ message: err.message || "Failed to get categories!" });
+    }
+}
+
+export { clerkWebhook , getUser , getChats , getCategories };

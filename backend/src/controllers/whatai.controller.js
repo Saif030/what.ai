@@ -1,6 +1,7 @@
 import { articleWriterAI } from "../utils/aiIntegration.js";
 import { Chat } from "../models/chat.model.js";
 import User from "../models/user.model.js";
+import uploadOnCloudinary from "../utils/CloudinaryConfig.js";
 
 const articleWriter = async (req , res) => {
 
@@ -59,7 +60,7 @@ const articleWriter = async (req , res) => {
                 query: prompt,
                 length,
                 response: response?.choices[0]?.message?.content,
-                category: "blog-title"
+                category: "article"
             });
             user.credits -= 1;
             await user.save();
@@ -121,4 +122,19 @@ const blogTitleGenerator = async (req, res) => {
     }
 }
 
-export { articleWriter , blogTitleGenerator }
+const objectRemover = async (req,res) => {
+    const image = req.file.buffer;
+    if(!image){
+        return res.status(200).json({message: "No image provided"});
+    }
+
+    const result = await uploadOnCloudinary(image);
+    if(!result){
+        return res.status(500).json({message: "Failed to upload image"});
+    }
+    console.log(result);
+
+    return res.status(200).json({ message: "Object remover working",result });
+}
+
+export { articleWriter , blogTitleGenerator , objectRemover }
