@@ -1,4 +1,4 @@
-import { logo } from '../assets/assets';
+import { logo } from '../assets/assets.js';
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useClerk, useUser, UserButton } from '@clerk/react';
 

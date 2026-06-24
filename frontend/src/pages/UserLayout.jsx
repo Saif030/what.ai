@@ -6,6 +6,7 @@ import { RiAiGenerateText } from "react-icons/ri";
 import { FaHashtag, FaImage } from "react-icons/fa";
 import { TbBackground } from "react-icons/tb";
 import { IoIosDocument } from "react-icons/io";
+import { logo } from '../assets/assets.js';
 
 function UserLayout() {
     const location = useLocation();
@@ -49,7 +50,9 @@ function UserLayout() {
                     >
                         <Menu size={24} />
                     </button>
-                    <h1 className="text-lg font-bold text-gray-800">WhatAI</h1>
+                    <a href="https://what-ai-t53p.vercel.app">
+                      <img className="h-14 sm:h-18 lg:h-20 cursor-pointer" src={logo} alt="logo" />
+                    </a>    
                     <div className="w-10" />
                 </header>
             )}

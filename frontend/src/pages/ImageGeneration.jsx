@@ -35,7 +35,7 @@ function ImageGeneration() {
                         </div>
                     </div>
                 </div>
-                <button className="cursor-pointer bg-black mt-8 text-white px-4 py-2 rounded-xl flex items-center justify-center gap-2"><RiAiGenerate2 /> Generate Image</button>
+                <button className="cursor-not-allowed bg-black mt-8 text-white px-4 py-2 rounded-xl flex items-center justify-center gap-2"><RiAiGenerate2 /> Generate Image</button>
             </div>
             <Output title={"Generated Image"} textClass="text-black" btnClass="bg-black hover:bg-black/80" icon1={<FaImage className="text-3xl text-black mx-auto" />} description={"click generate image button get AI generated Image"}/>
         </div>

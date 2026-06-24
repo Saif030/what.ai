@@ -40,7 +40,7 @@ function UserHome() {
     });
 
     return (
-        <div className="flex relative flex-col px-4 sm:px-6 w-full min-h-screen bg-gray-50">
+        <div className="flex relative flex-col px-4 sm:px-6 w-full min-h-[90vh] bg-gray-50">
             {/* Header Section */}
             <div className="flex flex-col gap-2 p-4">
                 <h1 className='text-xl sm:text-2xl lg:text-3xl font-semibold'>
@@ -151,7 +151,7 @@ function UserHome() {
                                     <div className="sm:col-span-2 lg:col-span-2 flex sm:block items-center gap-2">
                                         <span className="sm:hidden font-medium text-gray-500 text-xs">Type:</span>
                                         <span
-                                            className={`inline-flex items-center gap-1 lg:gap-2 px-2 lg:px-3 py-1 rounded-full text-xs lg:text-sm font-medium
+                                            className={`inline-flex items-center gap-1 lg:gap-2 px-2 lg:px-3 py-1 rounded-full text-xs font-medium
                                                 ${item?.category === "article"
                                                     ? "bg-blue-100 text-blue-700"
                                                     : "bg-emerald-100 text-emerald-700"

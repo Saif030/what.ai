@@ -118,7 +118,7 @@ export default function SideBar({ children, isMobileOpen, onMobileClose }) {
                         </div>
 
                         <SidebarContext.Provider value={{ expanded }}>
-                            <ul className="flex-1 px-3 overflow-y-auto">
+                            <ul className="flex-1 px-3 overflow-y-auto overflow-x-hidden">
                                 {children}
                             </ul>
                         </SidebarContext.Provider>
