@@ -71,26 +71,30 @@ const articleWriter = async (req , res) => {
 
         const response = await articleWriterAI(prompt);
 
-        if(response){
-            // Save to history
-            const chat = await Chat.create({
-                userId,
-                query: prompt,
-                length,
-                response: response?.choices[0]?.message?.content,
-                category: "article"
-            });
-            user.credits -= 1;
-            await user.save();
-            await chat.save();
-        }
-
         if(!response){
             return res.status(500).json({ message: "Failed to generate article" , articlePrompt , lengthPreset });
         }
-        return res.status(200).json({ message: "Article generated successfully", prompt , lengthPreset , data: response });
+
+        const content = response?.choices?.[0]?.message?.content;
+
+        if (!content) {
+            return res.status(500).json({ success: false, message: "Failed to generate blog titles" });
+        }
+
+        const chat = await Chat.create({
+                userId,
+                query: prompt,
+                length,
+                response: content,
+                category: "article"
+        });
+
+        user.credits -= 1;
+        await user.save();
+
+        return res.status(200).json({ sucess:true , message: "Article generated successfully", chat });
     }catch(error){
-        return res.status(500).json({ message: "Internal server error" , error });
+        return res.status(500).json({ sucess:false , message: "Internal server error"  });
     }
 
 }
@@ -98,7 +102,17 @@ const articleWriter = async (req , res) => {
 const blogTitleGenerator = async (req, res) => {
 
     const { keyword, categeory } = req.body;
+
+    if(!keyword || !categeory){
+        return res.status(400).json({ success:false , message: "Keyword and category are required" });
+    }
+
     const { userId } = req.auth()
+
+    if(!userId){
+        return res.status(401).json({ success:false , message: "Unauthorized" });
+    }
+
     const prompt = `
     You are an expert content strategist and SEO copywriter who writes high-converting blog titles.
 
@@ -123,53 +137,62 @@ const blogTitleGenerator = async (req, res) => {
         const user = await User.findOne({clerkId: userId});
 
         if(!user){
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ success:false , message: "User not found" });
         }
 
         if(user.credits < 1){
-            return res.status(400).json({ message: "Not enough credits" });
+            return res.status(400).json({ success:false , message: "Not enough credits" });
         }
 
         const response = await articleWriterAI(prompt);
 
-        if(response){
-            // Save to history
-            const chat = await Chat.create({
-                userId,
-                query: prompt,
-                response: response?.choices[0]?.message?.content,
-                category: "blog-title"
-            });
-            user.credits -= 1;
-            await user.save();
-            await chat.save();
+        if(!response){
+            return res.status(500).json({ success:false , message: "Failed to generate blog titles" , prompt , categeory });
         }
 
-        if(!response){
-            return res.status(500).json({ message: "Failed to generate blog titles" , prompt , categeory });
+        const content = response?.choices?.[0]?.message?.content;
+
+        if (!content) {
+            return res.status(500).json({ success: false, message: "Failed to generate blog titles" });
         }
-        return res.status(200).json({ message: "Blog titles generated successfully", prompt , keyword , categeory , data: response });
+
+        // Save to history
+        const chat = await Chat.create({
+            userId,
+            query: `${keyword} (${categeory})`,
+            response: content,
+            category: "blog-title"
+        });
+        user.credits -= 1;
+        await user.save();
+
+        return res.status(200).json({ success:true , message: "Blog titles generated successfully", chat });
     }catch(error){
-        return res.status(500).json({ message: "Internal server error" , error });
+        return res.status(500).json({ success:false , message: "Internal server error" });
     }
 }
 
 const backgorundRemover = async (req,res) => {
+
+    if(!req.file){
+        return res.status(400).json({success:false,message:"No image provided"});
+    }
+
     const image = req.file.buffer;
     const { userId } = req.auth()
     if(!image){
-        return res.status(400).json({message: "No image provided"});
+        return res.status(400).json({success:false,message:"No image provided"});
     }
 
     if(!userId){
-        return res.status(401).json({message: "Unauthorized"});
+        return res.status(401).json({success:false,message:"Unauthorized"});
     }
 
     try{
         const user = await User.findOne({clerkId: userId});
 
         if(!user){
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ success:false , message: "User not found" });
         }
 
         const transaction = await Transaction.findOne({
@@ -177,59 +200,65 @@ const backgorundRemover = async (req,res) => {
         });
 
         if(!transaction){
-            return res.status(400).json({ message: "Transaction not found not a premium subscriber" });
+            return res.status(400).json({ success:false , message: "Transaction not found not a premium subscriber" });
         }
 
         if(transaction.slug !== "premium"){
-            return res.status(400).json({ message: "Not a premium subscriber" });
+            return res.status(400).json({ success:false , message: "Not a premium subscriber" });
         }
 
-        if(user.credits < 1){
-            return res.status(400).json({ message: "Not enough credits" });
+        if(user.credits < 5){
+            return res.status(400).json({ success:false , message: "Not enough credits" });
         }
 
         const { originalImageUrl, backgroundRemovedUrl } = await uploadOnCloudinary(image,true,false);
 
         if(!originalImageUrl || !backgroundRemovedUrl){
-            return res.status(500).json({message: "Failed to upload image"});
+            return res.status(500).json({ success:false , message: "Failed to upload image" });
         }
-
-        if(originalImageUrl && backgroundRemovedUrl){
             // Save to history
-            const chat = await Chat.create({
-                userId,
-                query: originalImageUrl,
-                response: backgroundRemovedUrl,
-                category: "background-remover"
-            });
-            user.credits -= 5;
-            await user.save();
-            await chat.save();
-        }
+        const chat = await Chat.create({
+            userId,
+            query: originalImageUrl,
+            response: backgroundRemovedUrl,
+            category: "background-remover",
+            isImage : true
+        });
 
-        return res.status(200).json({ success: true ,originalImageUrl, backgroundRemovedUrl });
+        user.credits -= 5;
+        await user.save();
+
+        return res.status(200).json({ success: true , chat });
 
     }catch(error){
-        return res.status(500).json({ message: "Internal server error" , error });
+        return res.status(500).json({ success:false, message: "Internal server error"});
     }
 }
 
 const objectRemover = async (req,res) => {
+
+    if(!req.file){
+        return res.status(400).json({success:false,message:"No image provided"});
+    }
+
     const image = req.file.buffer;
     const { userId } = req.auth()
     const { prompt } = req.body;
+    if(!userId){
+        return res.status(401).json({success:false,message:"Unauthorized"});
+    }
     if(!image){
-        return res.status(400).json({message: "No image provided"});
+        return res.status(400).json({success:false,message:"No image provided"});
     }
     if(!prompt){
-        return res.status(400).json({message: "No prompt provided"});
+        return res.status(400).json({success:false,message:"No prompt provided"});
     }
 
     try{
         const user = await User.findOne({clerkId: userId});
 
         if(!user){
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({success:false,message:"User not found" });
         }
 
         const transaction = await Transaction.findOne({
@@ -237,64 +266,65 @@ const objectRemover = async (req,res) => {
         });
 
         if(!transaction){
-            return res.status(400).json({ message: "Transaction not found not a premium subscriber" });
+            return res.status(400).json({success:false,message:"Transaction not found not a premium subscriber" });
         }
 
         if(transaction.slug !== "premium"){
-            return res.status(400).json({ message: "Not a premium subscriber" });
+            return res.status(400).json({success:false,message:"Not a premium subscriber" });
         }
 
-        if(user.credits < 1){
-            return res.status(400).json({ message: "Not enough credits" });
+        if(user.credits < 10){
+            return res.status(400).json({success:false,message:"Not enough credits" });
         }
 
         const { originalImageUrl, objectRemovedUrl } = await uploadOnCloudinary(image,false,true,prompt);
 
         if(!originalImageUrl || !objectRemovedUrl){
-            return res.status(500).json({message: "Failed to upload image"});
+            return res.status(500).json({success:false,message:"Failed to upload image"});
         }
 
-        if(originalImageUrl && objectRemovedUrl){
-            // Save to history
-            const chat = await Chat.create({
-                userId,
-                query: originalImageUrl,
-                response: objectRemovedUrl,
-                category: "object-remover"
-            });
-            user.credits -= 10;
-            await user.save();
-            await chat.save();
-        }
+        // Save to history
+        const chat = await Chat.create({
+            userId,
+            query: originalImageUrl,
+            response: objectRemovedUrl,
+            category: "object-remover",
+            isImage: true
+        });
+        user.credits -= 10;
+        await user.save();
 
-        return res.status(200).json({ success: true ,originalImageUrl, objectRemovedUrl });
+        return res.status(200).json({ success: true , chat });
 
     }catch(error){
-        return res.status(500).json({ message: "Internal server error" , error });
+        return res.status(500).json({success:false,message:"Internal server error" });
     }
 }
 
 const resumeAnalyzer = async (req, res) => {
+    if(!req.file){
+        return res.status(400).json({ success:false, message: "No pdf provided"});
+    }
     const pdf = req.file.buffer;
     const { job_description } = req.body;
     const { userId } = req.auth()
     if(!pdf){
-        return res.status(400).json({message: "No pdf provided"});
+        return res.status(400).json({success:false, message: "No pdf provided"});
     }
 
     if(!userId){
-        return res.status(401).json({message: "Unauthorized"});
+        return res.status(401).json({success:false, message: "Unauthorized"});
     }
 
     if(!job_description){
-        return res.status(400).json({message: "No job description provided"});
+        return res.status(400).json({success:false, message: "No job description provided"});
     }
 
     try{
         const user = await User.findOne({clerkId: userId});
 
         if(!user){
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({success:false, message: "User not found" });
         }
 
         const transaction = await Transaction.findOne({
@@ -302,27 +332,27 @@ const resumeAnalyzer = async (req, res) => {
         });
 
         if(!transaction){
-            return res.status(400).json({ message: "Transaction not found not a premium subscriber" });
+            return res.status(400).json({success:false, message: "Transaction not found not a premium subscriber" });
         }
 
         if(transaction.slug !== "premium"){
-            return res.status(400).json({ message: "Not a premium subscriber" });
+            return res.status(400).json({success:false, message: "Not a premium subscriber" });
         }
 
-        if(user.credits < 1){
-            return res.status(400).json({ message: "Not enough credits" });
+        if(user.credits < 30){
+            return res.status(400).json({success:false, message: "Not enough credits" });
         }
 
         const response = await uploadOnCloudinary(pdf);
 
         if(!response){
-            return res.status(500).json({message: "Failed to upload image"});
+            return res.status(500).json({success:false, message: "Failed to upload image"});
         }
 
         const result = await extractTextFromBuffer(pdf);
 
         if(!result){
-            return res.status(500).json({message: "Failed to parse pdf"});
+            return res.status(500).json({success:false, message: "Failed to parse pdf"});
         }
 
         const prompt =`You are a senior Technical Recruiter, ATS Specialist, and Hiring Manager with expertise in software engineering recruitment.
@@ -357,26 +387,29 @@ Instructions:
         const aiResponse = await articleWriterAI(prompt);
 
         if(!aiResponse){
-            return res.status(500).json({message: "Failed to generate AI response"});
+            return res.status(500).json({success:false, message: "Failed to generate AI response"});
         }
 
-        if(aiResponse){
+        const content = aiResponse?.choices[0]?.message?.content
+        
+        if(!content){
+            return res.status(500).json({success:false, message: "Failed to generate AI response"});
+        }
+
             // Save to history
-            const chat = await Chat.create({
-                userId,
-                query: response?.secureUrl,
-                response: aiResponse?.choices[0]?.message?.content,
-                category: "resume-analyzer"
-            });
-            user.credits -= 30;
-            await user.save();
-            await chat.save();
-        }
+        const chat = await Chat.create({
+            userId,
+            query: response?.secureUrl,
+            response: content,
+            category: "resume-analyzer"
+        });
+        user.credits -= 30;
+        await user.save();
 
-        return res.status(200).json({ success: true , pdfUrl:response?.secureUrl , data : aiResponse });
+        return res.status(200).json({ success: true , chat });
 
     }catch(error){
-        return res.status(500).json({ message: "Internal server error" , error });
+        return res.status(500).json({ success: false, message: "Internal server error" });
     }
 }
 
