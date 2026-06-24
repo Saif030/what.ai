@@ -351,6 +351,8 @@ const resumeAnalyzer = async (req, res) => {
 
         const result = await extractTextFromBuffer(pdf);
 
+        console.log("Result:", result)
+
         if(!result){
             return res.status(500).json({success:false, message: "Failed to parse pdf"});
         }
