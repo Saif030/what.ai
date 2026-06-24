@@ -19,21 +19,27 @@ const uploadOnCloudinary = async (buffer,isBackgroundRemoval = false , isObjectR
       ).end(buffer);
     });
 
-    const url = isBackgroundRemoval ? cloudinary.url(result.public_id, {
-        effect: 'background_removal',
-        format: 'png'  // PNG preserves transparency
-    }) : result?.secure_url;
+    const backgroundRemovedUrl = isBackgroundRemoval
+      ? cloudinary.url(result.public_id, {
+          effect: "background_removal",
+          format: "png",
+        })
+      : null;
 
-    if(!url){
-        throw new Error("Failed to generate url");
+    if(!backgroundRemovedUrl){
+        throw new Error("Failed to generate background removed url");
     }
 
     const objectRemovedUrl = isObjectRemoval ? cloudinary.url(result.public_id, {
         effect: `gen_remove:prompt_${prompt}`,
         format: 'jpg'
-    }) : result?.secure_url;
+    }) : null;
 
-    return { success: true, originalImageUrl: result?.secure_url || null,url, objectRemovedUrl , publicId: result?.public_id , secureUrl: result?.secure_url };
+    if(!objectRemovedUrl){
+        throw new Error("Failed to generate object removed url");
+    }
+
+    return { success: true, originalImageUrl: result?.secure_url || null,backgroundRemovedUrl, objectRemovedUrl};
   } catch (error) {
     throw error;
   }

@@ -244,6 +244,7 @@ const objectRemover = async (req,res) => {
     const image = req.file.buffer;
     const { userId } = req.auth()
     const { prompt } = req.body;
+    
     if(!userId){
         return res.status(401).json({success:false,message:"Unauthorized"});
     }
