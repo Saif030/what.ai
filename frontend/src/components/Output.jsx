@@ -23,10 +23,10 @@ function Output({ title, icon1, description, result, textClass = "text-blue-500"
             {/* Body Content Area */}
             {/* 4. Removed absolute positioning. Added max-height and overflow-y-auto so long articles scroll safely inside the card */}
             <div className="mt-6 flex-1 max-h-[72vh] overflow-y-auto pr-2">
-                {result ? result?.originalImageUrl ? (
+                {result ? result?.chat?.isImage ? (
                    <div className="w-full h-[70vh] flex flex-col items-center justify-center">
-                    <img src={result?.backgroundRemovedUrl || result?.objectRemovedUrl} className="w-full h-[65vh] object-contain rounded-lg mt-2" alt="" />
-                    <a href={result?.backgroundRemovedUrl || result?.objectRemovedUrl} download={`whatai-${uuidv4()}.jpg`}>
+                    <img src={result?.chat?.response} className="w-full h-[65vh] object-contain rounded-lg mt-2" alt="" />
+                    <a href={result?.chat?.response} download={`whatai-${uuidv4()}.jpg`}>
                         <button className={`${btnClass} text-white px-4 py-2 cursor-pointer rounded-xl flex items-center justify-center gap-2 text-sm whitespace-nowrap transition-colors`} type="button"><Download size={16} />Save Image</button>
                     </a>
                    </div>
@@ -72,7 +72,7 @@ function Output({ title, icon1, description, result, textClass = "text-blue-500"
                             </td>
                             ),
                         }}
-                        >{result?.data?.choices[0]?.message?.content}</ReactMarkdown>
+                        >{result?.chat?.response}</ReactMarkdown>
                     </div>
                 ) : (
                     <div className="flex flex-col items-center justify-center h-full min-h-[20vh] text-center opacity-50">

@@ -352,8 +352,6 @@ const resumeAnalyzer = async (req, res) => {
 
         const result = await extractTextFromBuffer(pdf);
 
-        console.log("Result:", result)
-
         if(!result){
             return res.status(500).json({success:false, message: "Failed to parse pdf"});
         }
@@ -387,6 +385,7 @@ Instructions:
 10.Response should be professional.
 
 `;
+
         const aiResponse = await articleWriterAI(prompt);
 
         if(!aiResponse){
@@ -402,7 +401,7 @@ Instructions:
             // Save to history
         const chat = await Chat.create({
             userId,
-            query: response?.secureUrl,
+            query: response?.originalImageUrl,
             response: content,
             category: "resume-analyzer"
         });
@@ -412,7 +411,7 @@ Instructions:
         return res.status(200).json({ success: true , chat });
 
     }catch(error){
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        return res.status(500).json({ success: false, message: "Internal server error"});
     }
 }
 

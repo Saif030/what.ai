@@ -26,8 +26,8 @@ const uploadOnCloudinary = async (buffer,isBackgroundRemoval = false , isObjectR
         })
       : null;
 
-    if(!backgroundRemovedUrl){
-        throw new Error("Failed to generate background removed url");
+    if (isBackgroundRemoval && !backgroundRemovedUrl) {
+      throw new Error("Failed to generate background removed url");
     }
 
     const objectRemovedUrl = isObjectRemoval ? cloudinary.url(result.public_id, {
@@ -35,8 +35,8 @@ const uploadOnCloudinary = async (buffer,isBackgroundRemoval = false , isObjectR
         format: 'jpg'
     }) : null;
 
-    if(!objectRemovedUrl){
-        throw new Error("Failed to generate object removed url");
+    if (isObjectRemoval && !objectRemovedUrl) {
+      throw new Error("Failed to generate object removed url");
     }
 
     return { success: true, originalImageUrl: result?.secure_url || null,backgroundRemovedUrl, objectRemovedUrl};

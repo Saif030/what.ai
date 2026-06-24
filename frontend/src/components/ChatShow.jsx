@@ -38,8 +38,8 @@ const ChatShow = ({setisBoxShow}) => {
                         {specificChat?.chat[0]?.category?.toUpperCase()}
                     </span>
                 </div>
-                <h1 className="text-sm font-bold mb-2 break-words">query : {specificChat?.chat[0]?.query}</h1>
-                <p className="text-sm text-gray-400">{formattedDate}</p>
+                <h1 className="text-sm font-bold mb-2 break-words">{specificChat?.chat[0]?.query}</h1>
+                <p className="text-xs text-gray-200">{formattedDate}</p>
             </div>
 
             {/* Response Content */}
@@ -49,7 +49,7 @@ const ChatShow = ({setisBoxShow}) => {
                    </div>
                 )  : (
                     <div className="text-white relative text-sm leading-relaxed">
-                        <div className="absolute -top-6 -right-5 p-2">
+                        <div className="absolute -top-7 -right-5 p-2">
                             <CopyButton textToCopy={specificChat?.chat[0]?.response} />
                         </div>
                         {/* whitespace-pre-wrap ensures line breaks from the AI are preserved */}
