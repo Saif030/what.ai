@@ -1,9 +1,10 @@
 import { useUser } from '@clerk/react'
-import { useContext } from 'react';
+import { useContext , useState , useEffect } from 'react';
 import { UserDataContext } from '../DataContex/UserData.jsx';
+import ChatShow from '../components/ChatShow.jsx';
 
 function UserHome() {
-    const {credits,billingData,chatData,getSpecificChatData} = useContext(UserDataContext)
+    const {credits,billingData,chatData,getSpecificChatData,specificChat} = useContext(UserDataContext)
     const data = [
             {
                 prompt:"write article on topic india gdp continuos growth",
@@ -31,6 +32,14 @@ function UserHome() {
                 type:"Article"
             },
     ]
+    const [isboxShow, setisBoxShow] = useState(false)
+
+    useEffect(() => {
+        if (specificChat) {
+            setisBoxShow(true);
+        }
+    }, [specificChat]);
+
     const {user} = useUser()
     const todayDate = new Date().toLocaleDateString("en-US", {
         weekday: "long",
@@ -41,7 +50,7 @@ function UserHome() {
         minute: "2-digit",
     });
     return (
-        <div className="flex flex-col px-6 w-full">
+        <div className="flex relative flex-col px-6 w-full">
             <div className="flex flex-col gap-2 p-4">
                 <h1 className='text-3xl font-semibold'>Welcome Back , <span className='text-blue-500'>{user?.fullName}</span></h1>
                 <p className='text-sm text-gray-500'>{todayDate}</p>
@@ -143,6 +152,10 @@ function UserHome() {
                 </div>
             </div>
             </div>
+            {isboxShow ? 
+            <div className='w-[45vw] h-[90vh] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'><ChatShow setisBoxShow={setisBoxShow}/></div>
+             : null
+             }
         </div>
     )
 }   

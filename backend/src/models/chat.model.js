@@ -19,8 +19,10 @@ const chatSchema = new mongoose.Schema({
     },
     length: {
         type: String,
-        default: "0",
-        required: true
+    },
+    isImage: {
+        type: Boolean,
+        default: false
     }
 },{timestamps: true});
 

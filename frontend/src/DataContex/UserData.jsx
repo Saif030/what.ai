@@ -10,7 +10,7 @@ const UserDataProvider = ({ children }) => {
     const [ chatData , setchatData ] = useState(null)
     const [credits, setCredits] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [ categories, setCategories ] = useState([]);
+    const [ specificChat , setSpecificChat ] = useState(null);
 
     const { getToken } = useAuth();
     const { isSignedIn, isLoaded } = useUser(); // Added isLoaded
@@ -63,7 +63,7 @@ const UserDataProvider = ({ children }) => {
             headers: { Authorization: `Bearer ${token}` }
         };
         const chatRes = await axiosInstance.get(`/user/${chatId}`,config);
-        setCategories(chatRes.data);
+        setSpecificChat(chatRes.data);
     }
     // Trigger refreshData whenever Clerk's load state or sign-in state changes
     useEffect(() => {
@@ -80,7 +80,7 @@ const UserDataProvider = ({ children }) => {
                 loading, 
                 refreshData,
                 getSpecificChatData,
-                categories
+                specificChat
                  
             }}
         >
