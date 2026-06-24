@@ -10,6 +10,7 @@ const UserDataProvider = ({ children }) => {
     const [ chatData , setchatData ] = useState(null)
     const [credits, setCredits] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [ categories, setCategories ] = useState([]);
 
     const { getToken } = useAuth();
     const { isSignedIn, isLoaded } = useUser(); // Added isLoaded
@@ -39,7 +40,7 @@ const UserDataProvider = ({ children }) => {
                 axiosInstance.get("/user/profile", config),
                 axiosInstance.get("/user/billing", config),
                 axiosInstance.get("/user/chats",config),
-                axiosInstance.get("/credits/get-credits", config)
+                axiosInstance.get("/credits/get-credits", config),
             ]);
 
             setUser(userRes.data);
@@ -55,6 +56,15 @@ const UserDataProvider = ({ children }) => {
         }
     }, [isLoaded, isSignedIn, getToken, openSignIn]); // Dependencies for useCallback
 
+
+    const getSpecificChatData = async (chatId) => {
+        const token = await getToken();
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const chatRes = await axiosInstance.get(`/user/${chatId}`,config);
+        setCategories(chatRes.data);
+    }
     // Trigger refreshData whenever Clerk's load state or sign-in state changes
     useEffect(() => {
         refreshData();
@@ -68,7 +78,10 @@ const UserDataProvider = ({ children }) => {
                 chatData,
                 credits, 
                 loading, 
-                refreshData 
+                refreshData,
+                getSpecificChatData,
+                categories
+                 
             }}
         >
             {children}

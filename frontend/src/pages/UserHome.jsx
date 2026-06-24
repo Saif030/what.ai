@@ -3,8 +3,7 @@ import { useContext } from 'react';
 import { UserDataContext } from '../DataContex/UserData.jsx';
 
 function UserHome() {
-    const {credits,billingData,chatData} = useContext(UserDataContext)
-    console.log(chatData)
+    const {credits,billingData,chatData,getSpecificChatData} = useContext(UserDataContext)
     const data = [
             {
                 prompt:"write article on topic india gdp continuos growth",
@@ -135,7 +134,7 @@ function UserHome() {
 
                     {/* Action */}
                     <div className="col-span-2 flex justify-center">
-                        <button className="w-10 h-10 rounded-full border border-gray-200 hover:bg-gray-100 flex items-center justify-center transition">
+                        <button onClick={() => getSpecificChatData(item?._id)} className="w-10 h-10 rounded-full border border-gray-200 hover:bg-gray-100 flex items-center justify-center transition">
                         →
                         </button>
                     </div>

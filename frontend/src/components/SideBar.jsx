@@ -2,19 +2,22 @@ import { ChevronFirst, ChevronLast, LogOut } from "lucide-react"
 import { createContext, useContext, useState } from "react"
 import { useUser , useClerk } from "@clerk/react";
 import { logo } from "../assets/assets.js"
+import { useNavigate } from "react-router-dom"
 
 const SidebarContext = createContext();
 
 export default function SideBar({ children }) {
-    const { user , isLoaded } = useUser();
+    const { user } = useUser();
     const { openUserProfile , signOut } = useClerk();
     const [expanded, setExpanded] = useState(true)
+    const navigate = useNavigate()
+
     return (
         <>
             <aside className="h-screen">
                 <nav className="h-full flex flex-col bg-white border-r shadow-sm">
                     <div className="p-4 pb-2 flex justify-between items-center">
-                        <img alt="user" src={logo} className={`overflow-hidden object-cover rounded-full transition-all ${expanded ? "w-34" : "w-0"}`} />
+                        <img onClick={() => navigate("/")} alt="user" src={logo} className={`overflow-hidden cursor-pointer object-cover rounded-full transition-all ${expanded ? "w-34" : "w-0"}`} />
                         <button onClick={() => setExpanded((curr) => !curr)} className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100">
                             {expanded ? <ChevronFirst /> : <ChevronLast />}
                         </button>

@@ -1,6 +1,7 @@
 import { Webhook } from 'svix';
 import User from '../models/user.model.js';
 import { Chat } from '../models/chat.model.js';
+import mongoose from 'mongoose';
 
 const clerkWebhook = async (req, res) => {
     try {
@@ -162,32 +163,32 @@ const getChats = async (req, res) => {
     }
 }
 
-const getCategories = async (req, res) => {
+const getChat = async (req, res) => {
     try {
         const { userId } = req.auth();
-        const { category } = req.params; 
-        const categories = await Chat.find({
+        const { chatId } = req.params;
+        const chat = await Chat.find({
             $and: [
                 {userId : userId},
-                {category: category}
+                {_id: new mongoose.Types.ObjectId(chatId)}
             ]
         });
 
-        if(!categories || categories.length === 0){
+        if(!chat){
             return res.status(404).json({
                 success : false,
-                message : "Categories not found!"
+                message : "Chat not found!"
             })
         }
         
         return res.status(200).json({
             success : true,
-            message : "Categories found!",
-            categories
+            message : "Chat found!",
+            chat
         })
     } catch (err) {
-        return res.status(500).json({ message: err.message || "Failed to get categories!" });
+        return res.status(500).json({ message: err.message || "Failed to get chat!" });
     }
 }
 
-export { clerkWebhook , getUser , getChats , getCategories };
+export { clerkWebhook , getUser , getChats , getChat };

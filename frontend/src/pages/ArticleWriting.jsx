@@ -30,7 +30,7 @@ function ArticleWriting() {
             
             // Note: Adjust 'response.article' based on what your backend actually returns.
             // If your backend returns a string directly, just use 'response'
-            setResult(response.article || response); 
+            setResult(response); 
             
         } catch (error) {
             console.log(error);
