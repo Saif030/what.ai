@@ -100,7 +100,8 @@ function ArticleWriting() {
             </div>
 
             {/* Output Panel */}
-            <Output 
+            <Output
+                isLoading = {isLoading} 
                 title="Generated Article" 
                 result={result}
                 textClass="text-blue-500"

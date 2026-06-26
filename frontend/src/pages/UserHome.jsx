@@ -2,6 +2,7 @@ import { useUser } from '@clerk/react';
 import { useContext, useState } from 'react';
 import { UserDataContext } from '../DataContex/UserData.jsx';
 import ChatShow from '../components/ChatShow.jsx';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 function UserHome() {
     const { credits, billingData, chatData, getSpecificChatData, specificChat } = useContext(UserDataContext);
@@ -21,6 +22,18 @@ function UserHome() {
     };
 
     const { user, isLoaded } = useUser();
+
+    if(!credits && !billingData){
+        return (
+            <div className="flex items-center justify-center min-h-[90vh]">
+                <DotLottieReact
+                src="https://lottie.host/e78fe853-37a4-421a-9559-947e22a75bf6/yRcrICDWDg.lottie"
+                loop
+                autoplay
+                />
+            </div>
+        )
+    }
     
     if (!isLoaded) {
         return (

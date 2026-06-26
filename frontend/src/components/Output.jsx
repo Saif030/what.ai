@@ -2,8 +2,9 @@ import { RotateCcw, Download } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { v4 as uuidv4 } from 'uuid';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
-function Output({ title, icon1, description, result, textClass = "text-blue-500", btnClass = "bg-blue-500 hover:bg-blue-600" }) {
+function Output({ title, icon1, description, result, textClass = "text-blue-500", btnClass = "bg-blue-500 hover:bg-blue-600" , isLoading }) {
     return (
         <div className="w-full lg:w-[35vw] p-4 sm:p-6 lg:p-10 bg-white shadow-lg rounded-2xl flex flex-col max-h-[90vh] lg:max-h-none">
             
@@ -21,6 +22,14 @@ function Output({ title, icon1, description, result, textClass = "text-blue-500"
             </div>
 
             {/* Body Content Area */}
+            {isLoading ? 
+            <div className="mt-4 sm:mt-6 flex-1 max-h-[70vh] sm:max-h-[72vh] overflow-y-auto pr-1 sm:pr-2">
+                <DotLottieReact
+                src="https://lottie.host/3a6636b1-cf7b-4b4c-b40d-b3677ef6b1ef/Yj7cpOsS1y.lottie"
+                loop
+                autoplay
+                />
+            </div>  :
             <div className="mt-4 sm:mt-6 flex-1 max-h-[70vh] sm:max-h-[72vh] overflow-y-auto pr-1 sm:pr-2">
                 {result ? result?.chat?.isImage ? (
                    <div className="w-full h-auto sm:h-[70vh] flex flex-col items-center justify-center gap-4">
@@ -105,7 +114,8 @@ function Output({ title, icon1, description, result, textClass = "text-blue-500"
                         <p className="text-sm text-gray-500 max-w-[250px]">{description}</p>
                     </div>
                 )}
-            </div>
+            </div> 
+            }
         </div>
     );
 }

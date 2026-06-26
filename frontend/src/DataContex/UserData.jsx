@@ -55,7 +55,6 @@ const UserDataProvider = ({ children }) => {
         }
     }, [isLoaded, isSignedIn, getToken, openSignIn]); // Dependencies for useCallback
 
-
     const getSpecificChatData = async (chatId) => {
         const token = await getToken();
         const config = {
@@ -64,6 +63,7 @@ const UserDataProvider = ({ children }) => {
         const chatRes = await axiosInstance.get(`/user/${chatId}`,config);
         return chatRes.data;
     }
+    
     // Trigger refreshData whenever Clerk's load state or sign-in state changes
     useEffect(() => {
         refreshData();
