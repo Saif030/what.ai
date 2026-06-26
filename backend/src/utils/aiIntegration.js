@@ -56,7 +56,7 @@ const aiWriter = async (prompt) => {
         "max_completion_tokens": 4096,
         "top_p": 0.95,
         "stream": false,
-        "reasoning_effort": "default",
+        "reasoning_effort": "none",
         "stop": null
         });
 

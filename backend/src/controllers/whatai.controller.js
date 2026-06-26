@@ -147,7 +147,9 @@ const blogTitleGenerator = async (req, res) => {
             return res.status(400).json({ success:false , message: "Not enough credits" });
         }
 
-        const response = await articleWriterAI(prompt);
+        // const response = await articleWriterAI(prompt);
+
+        const response = await aiWriter(prompt);
 
         if(!response){
             return res.status(500).json({ success:false , message: "Failed to generate blog titles" , prompt , categeory });
