@@ -1,4 +1,4 @@
-import { articleWriterAI } from "../utils/aiIntegration.js";
+import { articleWriterAI , aiWriter } from "../utils/aiIntegration.js";
 import { Chat } from "../models/chat.model.js";
 import User from "../models/user.model.js";
 import uploadOnCloudinary from "../utils/CloudinaryConfig.js";
@@ -69,13 +69,16 @@ const articleWriter = async (req , res) => {
             return res.status(400).json({ message: "Not enough credits" });
         }
 
-        const response = await articleWriterAI(prompt);
+        // const response = await articleWriterAI(prompt);
+
+        const response = await aiWriter(prompt);
 
         if(!response){
             return res.status(500).json({ message: "Failed to generate article" , articlePrompt , lengthPreset });
         }
 
         const content = response?.choices?.[0]?.message?.content;
+
 
         if (!content) {
             return res.status(500).json({ success: false, message: "Failed to generate blog titles" });

@@ -30,7 +30,7 @@ function UserLayout() {
         { icon: <RiAiGenerateText size={20} />, text: "Article Writer", route: "/whatai/articleWriter" },
         { icon: <ImageOff size={20} />, text: "Object Removal", route: "/whatai/objectRemoval" },
         { icon: <FaHashtag size={20} />, text: "Blog Title Generator", route: "/whatai/blogTitleGenerator" },
-        { icon: <FaImage size={20} />, text: "Image Generation", route: "/whatai/imageGeneration" },
+        // { icon: <FaImage size={20} />, text: "Image Generation", route: "/whatai/imageGeneration" },
         { icon: <TbBackground size={20} />, text: "Background Removal", route: "/whatai/backgroundRemoval" },
         { icon: <IoIosDocument size={20} />, text: "Resume Analyzer", route: "/whatai/resumeAnalyzer" }
     ];

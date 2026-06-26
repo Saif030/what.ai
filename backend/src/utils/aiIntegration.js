@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Groq } from 'groq-sdk';
 
 const articleWriterAI = async (prompt) => {
     const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY;
@@ -37,4 +38,39 @@ const articleWriterAI = async (prompt) => {
     }
 };
 
-export { articleWriterAI }
+const groq = new Groq({
+    apiKey: process.env.GROQ_API
+});
+
+const aiWriter = async (prompt) => {
+    try{
+        const chatCompletion = await groq.chat.completions.create({
+        "messages": [
+            {
+            "role": "user",
+            "content": prompt
+            }
+        ],
+        "model": "qwen/qwen3-32b",
+        "temperature": 0.6,
+        "max_completion_tokens": 4096,
+        "top_p": 0.95,
+        "stream": false,
+        "reasoning_effort": "default",
+        "stop": null
+        });
+
+       return chatCompletion;
+    }
+   catch (error) {
+        if (error.response) {
+            console.error(`HTTP ${error.response.status}`, error.response.data);
+        } else {
+            console.error(error);
+        }
+        throw error; // ✅ re-throw so the caller knows it failed
+    }
+   
+}
+
+export { articleWriterAI, aiWriter }
