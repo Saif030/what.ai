@@ -1,8 +1,7 @@
 import express from "express";
-import { articleWriter, blogTitleGenerator, backgorundRemover , objectRemover , resumeAnalyzer } from "../controllers/whatai.controller.js";
+import { articleWriter, blogTitleGenerator, backgorundRemover , objectRemover , resumeAnalyzer,aiCodeWriter } from "../controllers/whatai.controller.js";
 import {requireAuth} from "@clerk/express";
 import upload from "../utils/fileuploads.js";
-import { codeWriter } from "../utils/aiIntegration.js";
 
 const router = express.Router();
 
@@ -16,6 +15,6 @@ router.post("/title-generator" , requireAuth() , blogTitleGenerator)
 router.post("/remove-background", requireAuth() , upload.single("image") , backgorundRemover)
 router.post("/remove-object", requireAuth() , upload.single("image") , objectRemover)
 router.post("/resume-analyzer", requireAuth() , upload.single("pdf") , resumeAnalyzer)
-router.post("/ai-code-writer", requireAuth() , codeWriter)
+router.post("/ai-code-writer", requireAuth() , aiCodeWriter)
 
 export default router;
