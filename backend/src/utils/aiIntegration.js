@@ -81,49 +81,60 @@ const aiWriter = async (prompt) => {
 }
 
 const streamCodeWriter = async (prompt, res) => {
-  // res is the Express response object - we write directly to it
-  
-  const completion = await client.chat.completions.create({
-    model: 'stepfun-ai/step-3.5-flash',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.7,
-    top_p: 0.9,
-    max_tokens: 16384,
-    stream: true,
-  });
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "stepfun-ai/step-3.5-flash",
+      messages: [{ role: "user", content: prompt }],
+      stream: true,
+    });
 
-  let fullResponse = '';
-  let fullReasoning = '';
+    let fullResponse = "";
+    let fullReasoning = "";
 
-  for await (const chunk of completion) {
-    const delta = chunk.choices[0]?.delta;
-    if (!delta) continue;
+    for await (const chunk of completion) {
+      const delta = chunk.choices[0]?.delta;
 
-    // Stream reasoning to client in real-time
-    if (delta.reasoning_content) {
-      fullReasoning += delta.reasoning_content;
-      res.write(`data: ${JSON.stringify({
-        type: 'reasoning',
-        content: delta.reasoning_content
-      })}\n\n`);
+      if (!delta) continue;
+
+      if (delta.reasoning_content) {
+        fullReasoning += delta.reasoning_content;
+
+        res.write(
+          `data: ${JSON.stringify({
+            type: "reasoning",
+            content: delta.reasoning_content,
+          })}\n\n`
+        );
+      }
+
+      if (delta.content) {
+        fullResponse += delta.content;
+
+        res.write(
+          `data: ${JSON.stringify({
+            type: "content",
+            content: delta.content,
+          })}\n\n`
+        );
+      }
     }
 
-    // Stream content to client in real-time
-    if (delta.content) {
-      fullResponse += delta.content;
-      res.write(`data: ${JSON.stringify({
-        type: 'content',
-        content: delta.content
-      })}\n\n`);
-    }
+    res.write(`data: ${JSON.stringify({ type: "done" })}\n\n`);
 
-    if (res.flush) res.flush();
+    return {
+      fullResponse,
+      fullReasoning,
+    };
+  } catch (err) {
+    res.write(
+      `data: ${JSON.stringify({
+        type: "error",
+        message: err.message,
+      })}\n\n`
+    );
+
+    throw err;
   }
-
-  // Send done signal
-  res.write(`data: ${JSON.stringify({ type: 'done' })}\n\n`);
-
-  return { fullResponse, fullReasoning };
 };
 
 
