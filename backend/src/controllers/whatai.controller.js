@@ -417,7 +417,7 @@ Instructions:
 const aiCodeWriter = async (req, res) => {
   try {
     const { prompt } = req.body;
-    const { userId } = req.auth; // or req.auth() depending on your middleware
+    const { userId } = req.auth(); // or req.auth() depending on your middleware
 
     // --- Authentication & Validation ---
     if (!userId) {
