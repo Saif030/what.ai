@@ -128,6 +128,7 @@ function ResumeAnalyzer() {
                 title="Analysis Result" 
                 result={result} 
                 textClass="text-stone-600" 
+                isLoading={isLoading}
                 btnClass="bg-stone-600 hover:bg-stone-700" 
                 icon1={<IoIosDocument className="text-3xl text-stone-600 mx-auto" />} 
                 description="Click analyze resume button to get AI generated analysis"

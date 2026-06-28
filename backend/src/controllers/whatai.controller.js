@@ -69,9 +69,9 @@ const articleWriter = async (req , res) => {
             return res.status(400).json({ message: "Not enough credits" });
         }
 
-        // const response = await articleWriterAI(prompt);
+        const response = await articleWriterAI(articlePrompt);
 
-        const response = await aiWriter(prompt);
+        // const response = await aiWriter(prompt);
 
         if(!response){
             return res.status(500).json({ message: "Failed to generate article" , articlePrompt , lengthPreset });
@@ -119,22 +119,14 @@ const blogTitleGenerator = async (req, res) => {
     const prompt = `
     You are an expert content strategist and SEO copywriter who writes high-converting blog titles.
 
-    Generate exactly 10 catchy, unique blog post titles using:
+    Generate exactly 10 catchy, unique blog post titles in pointers using:
     - Keyword: ${keyword}
     - Category: ${categeory}
 
     Requirements:
     - Each title must naturally include the keyword "${keyword}" (or a close variation).
     - Titles should fit the "${categeory}" niche and appeal to readers searching that topic.
-    - Mix styles across the 10: how-to, listicle, question-based, "ultimate guide", and curiosity/benefit-driven.
-    - Keep each title between 6-12 words.
-    - Make them engaging and clickable, but never misleading or clickbait.
-    - No repeated phrasing patterns (e.g. don't start every title the same way).
-
-    Output format:
-    - Return ONLY the 10 titles, one per line.
-    - No numbering, bullet points, quotation marks, markdown, or explanations.
-    `;
+    - Keep each title between 6-12 words.`;
     
     try{
         const user = await User.findOne({clerkId: userId});
@@ -147,9 +139,9 @@ const blogTitleGenerator = async (req, res) => {
             return res.status(400).json({ success:false , message: "Not enough credits" });
         }
 
-        // const response = await articleWriterAI(prompt);
+        const response = await articleWriterAI(prompt);
 
-        const response = await aiWriter(prompt);
+        // const response = await aiWriter(prompt);
 
         if(!response){
             return res.status(500).json({ success:false , message: "Failed to generate blog titles" , prompt , categeory });

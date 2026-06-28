@@ -6,7 +6,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 function Output({ title, icon1, description, result, textClass = "text-blue-500", btnClass = "bg-blue-500 hover:bg-blue-600" , isLoading }) {
     return (
-        <div className="w-full lg:w-[35vw] p-4 sm:p-6 lg:p-10 bg-white shadow-lg rounded-2xl flex flex-col max-h-[90vh] lg:max-h-none">
+        <div className="w-full lg:w-[35vw] p-4 sm:p-6 lg:p-10 bg-white shadow-lg rounded-2xl flex flex-col max-h-[90vh] lg:max-h-[85vh]">
             
             {/* Header Section */}
             <div className="w-full flex sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">

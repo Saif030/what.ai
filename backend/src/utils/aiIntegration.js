@@ -12,9 +12,9 @@ const articleWriterAI = async (prompt) => {
     };
 
     const payload = {
-        "model": "moonshotai/kimi-k2.6",
+        "model": "openai/gpt-oss-120b",
         "messages": [{ "role": "user", "content": prompt }],
-        "max_tokens": 16384,
+        "max_tokens": 4096,
         "temperature": 0.5,
         "top_p": 1.00,
         "stream": false,

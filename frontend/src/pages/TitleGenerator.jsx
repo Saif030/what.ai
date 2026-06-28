@@ -94,6 +94,7 @@ function TitleGenerator() {
             <Output 
                 title="Generated Titles" 
                 result={result} 
+                isLoading={isLoading}
                 textClass="text-purple-500" 
                 btnClass="bg-purple-500 hover:bg-purple-600" 
                 icon1={<FaHashtag className="text-3xl text-purple-500 mx-auto" />} 

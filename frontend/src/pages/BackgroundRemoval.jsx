@@ -120,6 +120,7 @@ function BackgroundRemoval() {
             <Output
                 title="Processed Image"
                 result={result}
+                isLoading={isLoading}
                 textClass="text-orange-500"
                 btnClass="bg-orange-500 hover:bg-orange-600"
                 icon1={<TbBackground className="text-3xl text-orange-500 mx-auto" />}
