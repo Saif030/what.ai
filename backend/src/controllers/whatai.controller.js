@@ -4,6 +4,7 @@ import User from "../models/user.model.js";
 import uploadOnCloudinary from "../utils/CloudinaryConfig.js";
 import Transaction from "../models/billing.model.js";
 import { PdfReader } from "pdfreader";
+import { streamCodeWriter } from "../utils/aiIntegration.js";
 
 const extractTextFromBuffer = (buffer) => {
   return new Promise((resolve, reject) => {
@@ -412,4 +413,80 @@ Instructions:
     }
 }
 
-export { articleWriter , blogTitleGenerator , backgorundRemover , objectRemover , resumeAnalyzer }
+
+const aiCodeWriter = async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    const { userId } = req.auth; // or req.auth() depending on your middleware
+
+    // --- Authentication & Validation ---
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+    if (!prompt) {
+      return res.status(400).json({ success: false, message: 'Prompt is required' });
+    }
+
+    const user = await User.findOne({ clerkId: userId });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    if (user.credits < 20) {
+      return res.status(400).json({ success: false, message: 'Not enough credits' });
+    }
+
+    // --- Set SSE Headers BEFORE any streaming ---
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    // --- Handle Client Disconnect ---
+    let clientDisconnected = false;
+    req.on('close', () => {
+      clientDisconnected = true;
+    });
+
+    // --- Stream AI Response (writes directly to res) ---
+    const { fullResponse, fullReasoning } = await streamCodeWriter(prompt, res);
+
+    if (clientDisconnected) {
+      // Don't save if user closed connection
+      return res.end();
+    }
+
+    // --- Save to Database AFTER stream completes ---
+    const chat = await Chat.create({
+      userId,
+      query: prompt,
+      response: fullResponse,
+      category: 'code',
+    });
+
+    // --- Deduct Credits ---
+    user.credits -= 20;
+    await user.save();
+
+    // --- End Stream ---
+    res.end();
+
+  } catch (error) {
+    console.error('AI Code Writer Error:', error);
+    
+    // If headers already sent (streaming started), send error via SSE
+    if (res.headersSent) {
+      res.write(`data: ${JSON.stringify({ 
+        type: 'error', 
+        message: error.message 
+      })}\n\n`);
+      return res.end();
+    }
+    
+    // Otherwise send regular JSON error
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error' 
+    });
+  }
+};
+
+export { articleWriter , blogTitleGenerator , backgorundRemover , objectRemover , resumeAnalyzer , aiCodeWriter }

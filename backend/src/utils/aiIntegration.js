@@ -1,5 +1,12 @@
 import axios from 'axios';
 import { Groq } from 'groq-sdk';
+import OpenAI from 'openai';
+
+
+const openai = new OpenAI({
+  apiKey: process.env.NVIDIA_API_KEY,
+  baseURL: 'https://integrate.api.nvidia.com/v1',
+});
 
 const articleWriterAI = async (prompt) => {
     const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY;
@@ -73,4 +80,51 @@ const aiWriter = async (prompt) => {
    
 }
 
-export { articleWriterAI, aiWriter }
+const streamCodeWriter = async (prompt, res) => {
+  // res is the Express response object - we write directly to it
+  
+  const completion = await client.chat.completions.create({
+    model: 'stepfun-ai/step-3.5-flash',
+    messages: [{ role: 'user', content: prompt }],
+    temperature: 0.7,
+    top_p: 0.9,
+    max_tokens: 16384,
+    stream: true,
+  });
+
+  let fullResponse = '';
+  let fullReasoning = '';
+
+  for await (const chunk of completion) {
+    const delta = chunk.choices[0]?.delta;
+    if (!delta) continue;
+
+    // Stream reasoning to client in real-time
+    if (delta.reasoning_content) {
+      fullReasoning += delta.reasoning_content;
+      res.write(`data: ${JSON.stringify({
+        type: 'reasoning',
+        content: delta.reasoning_content
+      })}\n\n`);
+    }
+
+    // Stream content to client in real-time
+    if (delta.content) {
+      fullResponse += delta.content;
+      res.write(`data: ${JSON.stringify({
+        type: 'content',
+        content: delta.content
+      })}\n\n`);
+    }
+
+    if (res.flush) res.flush();
+  }
+
+  // Send done signal
+  res.write(`data: ${JSON.stringify({ type: 'done' })}\n\n`);
+
+  return { fullResponse, fullReasoning };
+};
+
+
+export { articleWriterAI, aiWriter, streamCodeWriter }
