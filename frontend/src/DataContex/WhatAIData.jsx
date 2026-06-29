@@ -154,10 +154,89 @@ const WhatAIDataProvider = ({ children }) => {
         }
     }
 
+    const AICodeWriter = async (prompt, onChunk, onDone, onError) => {
+
+        if (!isLoaded) return;
+        if (!isSignedIn) {
+            openSignIn();
+            return;
+        }
+
+        try {
+            const token = await getToken();
+            
+            // Use fetch, not Axios, for streaming
+            const response = await fetch(
+            "https://what-ai-henna.vercel.app/whatai/ai-code-writer",
+            {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ prompt }),
+            }
+            );
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Request failed');
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let fullContent = '';
+
+            while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop(); // Keep incomplete line
+
+            for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+
+                const dataStr = line.slice(6).trim();
+                if (!dataStr) continue;
+
+                try {
+                const data = JSON.parse(dataStr);
+
+                switch (data.type) {
+                    case 'content':
+                    fullContent += data.content;
+                    onChunk?.(data.content, fullContent);
+                    break;
+
+                    case 'done':
+                    onDone?.(fullContent);
+                    return { content: fullContent };
+
+                    case 'error':
+                    throw new Error(data.message);
+                }
+                } catch (e) {
+                // Skip malformed lines
+                }
+            }
+            }
+
+            return { content: fullContent };
+
+        } catch (error) {
+            console.error(error);
+            onError?.(error.message);
+            throw error;
+        }
+    };
+
 
     return (
         <WhatAIDataContext.Provider
-            value={{ ArticleWriter, TitleWriter, BackGroundRemover , ObjectRemover , ResumeAnalyzer }}
+            value={{ ArticleWriter, TitleWriter, BackGroundRemover , ObjectRemover , ResumeAnalyzer , AICodeWriter }}
         >
             {children}
         </WhatAIDataContext.Provider>

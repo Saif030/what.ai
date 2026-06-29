@@ -6,6 +6,7 @@ import { useUser } from "@clerk/react";
 import ArticleWriting from "../pages/ArticleWriting";
 import BackgroundRemoval from "../pages/BackgroundRemoval";
 // import ImageGeneration from "../pages/ImageGeneration";
+import CodeGeneration from "../pages/CodeGeneration";
 import ObjectRemoval from "../pages/ObjectRemoval";
 import TitleGenerator from "../pages/TitleGenerator";
 import ResumeAnalyzer from "../pages/ResumeAnalyzer";
@@ -37,6 +38,7 @@ function UserRoutes() {
         <Route path="objectRemoval" element={<ObjectRemoval />} />
         <Route path="blogTitleGenerator" element={<TitleGenerator />} />
         <Route path="resumeAnalyzer" element={<ResumeAnalyzer />} />
+        <Route path="codeGeneration" element={<CodeGeneration />} />
       </Route>
     </Routes>
   );

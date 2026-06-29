@@ -5,7 +5,7 @@ import ChatShow from '../components/ChatShow.jsx';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 function UserHome() {
-    const { credits, billingData, chatData, getSpecificChatData, specificChat } = useContext(UserDataContext);
+    const { credits, billingData, chatData, getSpecificChatData, specificChat, deleteChatData } = useContext(UserDataContext);
     
     const [isBoxShow, setIsBoxShow] = useState(false);
     const [selectedChat, setSelectedChat] = useState(null);
@@ -18,6 +18,16 @@ function UserHome() {
             setIsBoxShow(true);
         } catch (error) {
             console.error('Failed to load chat:', error);
+        }
+    };
+
+    const deleteChat = async (chatId) => {
+        if (!chatId) return;
+        try {
+            await deleteChatData(chatId);
+            window.location.reload();
+        } catch (error) {
+            console.error('Failed to delete chat:', error);
         }
     };
 
@@ -53,7 +63,7 @@ function UserHome() {
     });
 
     return (
-        <div className="flex relative flex-col px-4 sm:px-6 w-full min-h-[90vh] bg-gray-50">
+        <div className="flex relative flex-col px-4 sm:p-3 w-full min-h-[90vh] bg-gray-50">
             {/* Header Section */}
             <div className="flex flex-col gap-2 p-4">
                 <h1 className='text-xl sm:text-2xl lg:text-3xl font-semibold'>
@@ -129,7 +139,7 @@ function UserHome() {
                     </div>
 
                     {/* Table Body */}
-                    <div className="flex-1 overflow-y-auto min-h-0">
+                    <div className="flex-1 overflow-y-auto min-h-0 max-h-[39vh]">
                         {chatData?.chats?.length > 0 ? (
                             chatData.chats.map((item) => (
                                 <div
@@ -179,7 +189,15 @@ function UserHome() {
                                     </div>
 
                                     {/* Action */}
-                                    <div className="sm:col-span-2 flex justify-end sm:justify-center mt-2 sm:mt-0">
+                                    <div className="sm:col-span-2 flex justify-end sm:justify-center gap-3 mt-2 sm:mt-0">
+                                        <button
+                                            onClick={() => deleteChat(item?._id || item?.id)}
+                                            className="w-9 h-9 lg:w-10 lg:h-10 rounded-full cursor-pointer border border-gray-200 hover:bg-gray-100 flex items-center justify-center transition active:scale-95"
+                                            aria-label="Delete chat"
+                                            type="button"
+                                        >
+                                            <span className="text-sm lg:text-base">🗑️</span>
+                                        </button>
                                         <button 
                                             onClick={() => viewChat(item?._id || item?.id)} 
                                             className="w-9 h-9 lg:w-10 lg:h-10 rounded-full cursor-pointer border border-gray-200 hover:bg-gray-100 flex items-center justify-center transition active:scale-95"

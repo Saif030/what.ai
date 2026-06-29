@@ -63,6 +63,15 @@ const UserDataProvider = ({ children }) => {
         const chatRes = await axiosInstance.get(`/user/${chatId}`,config);
         return chatRes.data;
     }
+
+    const deleteChatData = async (chatId) => {
+        const token = await getToken();
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const chatRes = await axiosInstance.get(`/user/delete/${chatId}`,config);
+        return chatRes.data;
+    }
     
     // Trigger refreshData whenever Clerk's load state or sign-in state changes
     useEffect(() => {
@@ -79,6 +88,7 @@ const UserDataProvider = ({ children }) => {
                 loading, 
                 refreshData,
                 getSpecificChatData,
+                deleteChatData
             }}
         >
             {children}

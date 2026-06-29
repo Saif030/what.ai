@@ -167,6 +167,18 @@ const getChat = async (req, res) => {
     try {
         const { userId } = req.auth();
         const { chatId } = req.params;
+        if(!userId) {
+            return res.status(401).json({
+                success : false,
+                message : "Unauthorized!"
+            })
+        }
+        if(!chatId){
+            return res.status(400).json({
+                success : false,
+                message : "Chat ID is required!"
+            })
+        }
         const chat = await Chat.find({
             $and: [
                 {userId : userId},
@@ -191,4 +203,37 @@ const getChat = async (req, res) => {
     }
 }
 
-export { clerkWebhook , getUser , getChats , getChat };
+const chatDelete = async (req,res) => {
+    const {userId} = req.auth();
+    const {chatId} = req.params;
+    if(!userId){
+        return res.status(401).json({
+            success : false,
+            message : "Unauthorized!"
+        })
+    }
+    if(!chatId){
+        return res.status(400).json({
+            success : false,
+            message : "Chat ID is required!"
+        })
+    }
+    try {
+        const chat = await Chat.findByIdAndDelete(chatId);
+        if(!chat){
+            return res.status(404).json({
+                success : false,
+                message : "Chat not found!"
+            })
+        }
+        return res.status(200).json({
+            success : true,
+            message : "Chat deleted!",
+            chat
+        })
+    } catch (err) {
+        return res.status(500).json({ message: err.message || "Failed to delete chat!" });
+    }
+}
+
+export { clerkWebhook , getUser , getChats , getChat , chatDelete };

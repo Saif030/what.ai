@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import SideBar, { SidebarItem } from "../components/SideBar.jsx";
-import { Home, Menu, ImageOff } from "lucide-react";
+import { Home, Menu, ImageOff, CodeXml } from "lucide-react";
 import { RiAiGenerateText } from "react-icons/ri";
 import { FaHashtag, FaImage } from "react-icons/fa";
 import { TbBackground } from "react-icons/tb";
@@ -32,7 +32,8 @@ function UserLayout() {
         { icon: <FaHashtag size={20} />, text: "Blog Title Generator", route: "/whatai/blogTitleGenerator" },
         // { icon: <FaImage size={20} />, text: "Image Generation", route: "/whatai/imageGeneration" },
         { icon: <TbBackground size={20} />, text: "Background Removal", route: "/whatai/backgroundRemoval" },
-        { icon: <IoIosDocument size={20} />, text: "Resume Analyzer", route: "/whatai/resumeAnalyzer" }
+        { icon: <IoIosDocument size={20} />, text: "Resume Analyzer", route: "/whatai/resumeAnalyzer" },
+        { icon: <CodeXml size={20} />, text: "Code Generation", route: "/whatai/codeGeneration" }
     ];
 
     const currentRoute = location.pathname;
@@ -74,8 +75,8 @@ function UserLayout() {
             </SideBar>
 
             {/* Main Content */}
-            <main className={`flex-1 min-h-screen w-full ${isMobile ? 'pt-14' : ''}`}>
-                <div className="p-4 sm:p-6 lg:p-8 w-full min-h-screen">
+            <main className={`flex-1 min-h-screen w-full ${isMobile ? 'pt-10' : ''}`}>
+                <div className="p-4 sm:p-6 lg:p-1 w-full min-h-screen">
                     <Outlet />
                 </div>
             </main>
