@@ -3,6 +3,10 @@ import { useContext, useState } from 'react';
 import { UserDataContext } from '../DataContex/UserData.jsx';
 import ChatShow from '../components/ChatShow.jsx';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { toast } from 'react-toastify';
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { IoOpenOutline } from "react-icons/io5";
+
 
 function UserHome() {
     const { credits, billingData, chatData, getSpecificChatData, specificChat, deleteChatData } = useContext(UserDataContext);
@@ -17,7 +21,7 @@ function UserHome() {
             setSelectedChat(chat);
             setIsBoxShow(true);
         } catch (error) {
-            console.error('Failed to load chat:', error);
+            toast.error("Failed to load chat");
         }
     };
 
@@ -26,8 +30,9 @@ function UserHome() {
         try {
             await deleteChatData(chatId);
             window.location.reload();
+            toast.success("Chat deleted successfully");
         } catch (error) {
-            console.error('Failed to delete chat:', error);
+            toast.error("Failed to delete chat");
         }
     };
 
@@ -196,7 +201,7 @@ function UserHome() {
                                             aria-label="Delete chat"
                                             type="button"
                                         >
-                                            <span className="text-sm lg:text-base">🗑️</span>
+                                            <RiDeleteBin6Line />
                                         </button>
                                         <button 
                                             onClick={() => viewChat(item?._id || item?.id)} 
@@ -204,7 +209,7 @@ function UserHome() {
                                             aria-label="View chat"
                                             type="button"
                                         >
-                                            <span className="text-sm lg:text-base">→</span>
+                                            <IoOpenOutline />
                                         </button>
                                     </div>
                                 </div>

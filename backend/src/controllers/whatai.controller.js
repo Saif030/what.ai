@@ -431,6 +431,18 @@ const aiCodeWriter = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
+    const transaction = await Transaction.findOne({
+      clerkId : user.clerkId
+    });
+
+    if(!transaction){
+      return res.status(400).json({success:false, message: "Transaction not found not a premium subscriber" });
+    }
+
+    if(transaction.slug !== "premium"){
+      return res.status(400).json({success:false, message: "Not a premium subscriber" });
+    }
+
     if (user.credits < 20) {
       return res.status(400).json({ success: false, message: 'Not enough credits' });
     }
