@@ -447,7 +447,7 @@ const aiCodeWriter = async (req, res) => {
     });
 
     // --- Stream AI Response (writes directly to res) ---
-    const { fullResponse, fullReasoning } = await streamCodeWriter(prompt, res);
+    const { fullResponse } = await streamCodeWriter(prompt, res);
 
     if (clientDisconnected) {
       // Don't save if user closed connection

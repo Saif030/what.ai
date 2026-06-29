@@ -89,23 +89,11 @@ const streamCodeWriter = async (prompt, res) => {
     });
 
     let fullResponse = "";
-    let fullReasoning = "";
 
     for await (const chunk of completion) {
       const delta = chunk.choices[0]?.delta;
 
       if (!delta) continue;
-
-      if (delta.reasoning_content) {
-        fullReasoning += delta.reasoning_content;
-
-        res.write(
-          `data: ${JSON.stringify({
-            type: "reasoning",
-            content: delta.reasoning_content,
-          })}\n\n`
-        );
-      }
 
       if (delta.content) {
         fullResponse += delta.content;
@@ -122,8 +110,7 @@ const streamCodeWriter = async (prompt, res) => {
     res.write(`data: ${JSON.stringify({ type: "done" })}\n\n`);
 
     return {
-      fullResponse,
-      fullReasoning,
+      fullResponse
     };
   } catch (err) {
     res.write(
