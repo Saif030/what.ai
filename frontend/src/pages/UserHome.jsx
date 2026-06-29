@@ -6,6 +6,8 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { toast } from 'react-toastify';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { IoOpenOutline } from "react-icons/io5";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 
 function UserHome() {
@@ -29,7 +31,6 @@ function UserHome() {
         if (!chatId) return;
         try {
             await deleteChatData(chatId);
-            window.location.reload();
             toast.success("Chat deleted successfully");
         } catch (error) {
             toast.error("Failed to delete chat");
@@ -37,18 +38,6 @@ function UserHome() {
     };
 
     const { user, isLoaded } = useUser();
-
-    if(!credits && !billingData){
-        return (
-            <div className="flex items-center justify-center min-h-[90vh]">
-                <DotLottieReact
-                src="https://lottie.host/e78fe853-37a4-421a-9559-947e22a75bf6/yRcrICDWDg.lottie"
-                loop
-                autoplay
-                />
-            </div>
-        )
-    }
     
     if (!isLoaded) {
         return (
@@ -83,7 +72,7 @@ function UserHome() {
                 <div className="flex items-center justify-between bg-white rounded-xl shadow-lg p-4 sm:p-6">
                     <div className="flex-1">
                         <p className="text-sm sm:text-base lg:text-lg text-gray-600">Total Credits:</p>
-                        <p className="text-xl sm:text-2xl font-semibold">{credits?.credits ?? 0}</p>
+                        <p className="text-xl sm:text-2xl font-semibold">{credits?.credits ?? <Skeleton width={150} />}</p>
                     </div>
                     <div className="flex-shrink-0">
                         <img 
@@ -98,7 +87,7 @@ function UserHome() {
                 <div className="flex items-center justify-between bg-white rounded-xl shadow-lg p-4 sm:p-6">
                     <div className="flex-1">
                         <p className="text-sm sm:text-base lg:text-lg text-gray-600">Plan Status:</p>
-                        <p className="text-xl sm:text-2xl font-semibold">{billingData?.billingData?.slug ?? 'Free'}</p>
+                        <p className="text-xl sm:text-2xl font-semibold">{billingData?.billingData?.slug ?? <Skeleton width={150} />}</p>
                     </div>
                     <div className="flex-shrink-0">
                         <img 
@@ -113,7 +102,7 @@ function UserHome() {
                 <div className="flex items-center justify-between bg-white rounded-xl shadow-lg p-4 sm:p-6 sm:col-span-2 lg:col-span-1">
                     <div className="flex-1">
                         <p className="text-sm sm:text-base lg:text-lg text-gray-600">Total Creations:</p>
-                        <p className="text-xl sm:text-2xl font-semibold">{chatData?.chats?.length ?? 0}</p>
+                        <p className="text-xl sm:text-2xl font-semibold">{chatData?.chats?.length ?? <Skeleton width={150} />}</p>
                     </div>
                     <div className="flex-shrink-0">
                         <img 

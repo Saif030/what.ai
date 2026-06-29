@@ -7,7 +7,7 @@ export const UserDataContext = createContext();
 const UserDataProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [billingData, setBillingData] = useState(null);
-    const [ chatData , setchatData ] = useState(null)
+    const [chatData , setChatData ] = useState(null)
     const [credits, setCredits] = useState(0);
     const [loading, setLoading] = useState(true);
 
@@ -44,7 +44,7 @@ const UserDataProvider = ({ children }) => {
 
             setUser(userRes.data);
             setBillingData(billingRes.data);
-            setchatData(chatsRes.data);
+            setChatData(chatsRes.data);
             setCredits(creditsRes.data);
         } catch (error) {
             console.error("Error fetching user data:", error);
@@ -70,6 +70,7 @@ const UserDataProvider = ({ children }) => {
             headers: { Authorization: `Bearer ${token}` }
         };
         const chatRes = await axiosInstance.get(`/user/delete/${chatId}`,config);
+        await refreshData();
         return chatRes.data;
     }
     
