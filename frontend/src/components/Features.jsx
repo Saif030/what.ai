@@ -1,7 +1,7 @@
 import ShinyText from './ShinyText';
 import { TbWriting } from "react-icons/tb";
-import { FaPhotoVideo } from "react-icons/fa";
-import { MdOutlineOndemandVideo } from "react-icons/md";
+import { IoDocumentText } from "react-icons/io5";
+import { FaCode } from "react-icons/fa6";
 import { TbBackground } from "react-icons/tb";
 import { MdOutlineSubtitles } from "react-icons/md";
 import { FaScissors } from "react-icons/fa6";
@@ -24,9 +24,9 @@ function Features() {
       description: "Find the perfect, catchy title for your blog posts with our AI-powered generator."
     },
     {
-      title: "AI Image Generation",
-      icon: <FaPhotoVideo size={26} />,
-      description: "Create stunning visuals with our AI image generation tool. Experience the power of AI."
+      title: "Resume Analyzer",
+      icon: <IoDocumentText size={26} />,
+      description: "Analyze and improve your resume with our AI-powered tool."
     },
     {
       title: "Background Removal",
@@ -34,9 +34,9 @@ function Features() {
       description: "Effortlessly remove backgrounds from your images with our AI-driven tool."
     },
     {
-      title: "AI Video Generation",
-      icon: <MdOutlineOndemandVideo size={26} />,
-      description: "Create stunning videos with our AI video generation tool. Experience the power of AI."
+      title: "AI Code Assistant",
+      icon: <FaCode size={26} />,
+      description: "Get help with coding tasks using our AI-powered code assistant."
     }
   ];
 
