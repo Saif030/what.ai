@@ -81,7 +81,7 @@ function Output({ title, icon1, description, result, textClass = "text-blue-500"
                                 ),
                                 table: ({ children }) => (
                                     <div className="overflow-x-auto my-3 sm:my-4 -mx-2 sm:mx-0">
-                                        <table className="w-full border-collapse border border-gray-300 min-w-[300px]">
+                                        <table className="w-full border-collapse border border-gray-300 min-w-75">
                                             {children}
                                         </table>
                                     </div>
