@@ -19,7 +19,7 @@ const articleWriterAI = async (prompt) => {
     };
 
     const payload = {
-        "model": "nvidia/nemotron-3-super-120b-a12b",
+        "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "messages": [{ "role": "user", "content": prompt }],
         "max_tokens": 4096,
         "temperature": 0.5,
@@ -83,7 +83,7 @@ const aiWriter = async (prompt) => {
 const streamCodeWriter = async (prompt, res) => {
   try {
     const completion = await openai.chat.completions.create({
-      model: "stepfun-ai/step-3.7-flash",
+      model: "stepfun-ai/step-5-preview",
       messages: [{ role: "user", content: prompt }],
       stream: true,
     });
